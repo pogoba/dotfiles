@@ -350,6 +350,10 @@ class ClaudeQueryError(Exception):
     """Raised when a Claude query fails to return expected output."""
     pass
 
+class ClaudeUsageLimitError(Exception):
+    """Raised when Claude usage limit is hit."""
+    pass
+
 
 def validate_deadline(item: dict) -> str | None:
     """Validate a deadline item. Returns error message or None if valid."""
@@ -406,12 +410,19 @@ def run_claude(
         if "An update to our Consumer Terms and Privacy Policy has taken effect" in result.stderr:
             # is a random message to prevent automated use?
             progress_write(f"Retrying Claude command after privacy policy message: {shlex.join(cmd)}")
-        elif "error_during_execution" in result.subtype:
+        elif "error_during_execution" in getattr(result, "subtype", ""):
             progress_write(f"Retrying Claude command after claude-cli error: {'\n'.join(result.errors)}")
         else:
             break
 
     if result.returncode != 0:
+        try:
+            output = json.loads(result.stdout)
+        except Exception:
+            pass
+        else:
+            if "You've hit your limit" in output.get("result", ""):
+                raise ClaudeUsageLimitError()
         progress_write(f"Command failed: {shlex.join(cmd)}")
         progress_write(f"stdout: {result.stdout}")
         progress_write(f"stderr: {result.stderr}")
@@ -841,41 +852,49 @@ def write_html_table(results: dict[str, ConferenceEvent], filepath: str):
 
 def main():
     results = {}
-    with ThreadPoolExecutor(max_workers=16) as executor:
-        futures = {
-            executor.submit(fetch_deadlines, conf_label(name, year), url): (conf_label(name, year), name, year, url)
-            for name, year, url in CONFERENCES
-            if year >= FROM_YEAR
-        }
-        futures_iter = as_completed(futures)
-        if tqdm:
-            futures_iter = tqdm(futures_iter, total=len(futures), desc="Fetching", file=sys.stderr)
+    try:
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            futures = {
+                executor.submit(fetch_deadlines, conf_label(name, year), url): (conf_label(name, year), name, year, url)
+                for name, year, url in CONFERENCES
+                if year >= FROM_YEAR
+            }
+            futures_iter = as_completed(futures)
+            if tqdm:
+                futures_iter = tqdm(futures_iter, total=len(futures), desc="Fetching", file=sys.stderr)
 
-        for future in futures_iter:
-            label, name, year, url = futures[future]
-            try:
-                result = future.result()  # ConferenceEvent
-                result.name = name
-                result.year = year
-                results[label] = result
-                progress_write(f"  {label}: OK")
-            except Exception as e:
-                progress_write(f"  {label}: Error - {e}")
-                [ progress_write(f"  {label}: {line}") for line in traceback.format_exception(e) ]
+            for future in futures_iter:
+                label, name, year, url = futures[future]
+                try:
+                    result = future.result()  # ConferenceEvent
+                    result.name = name
+                    result.year = year
+                    results[label] = result
+                    progress_write(f"  {label}: OK")
+                except ClaudeUsageLimitError as e:
+                    print("Aborting due to API limits...", flush=True)
+                    executor.shutdown(wait=True, cancel_futures=True)
+                    raise e
+                except Exception as e:
+                    progress_write(f"  {label}: Error - {e}")
+                    [ progress_write(f"  {label}: {line}") for line in traceback.format_exception(e) ]
+    except Exception as e:
+        _crawler.quit()
+        raise e
+    else:
+        # Write JSON cache
+        with open("/tmp/deadlines.json", "w") as f:
+            result_dict = { k: v.to_dict() for k, v in results.items() }
+            json.dump(result_dict, f, indent=2)
+        print("Wrote /tmp/deadlines.json", file=sys.stderr)
 
-    # Write JSON cache
-    with open("/tmp/deadlines.json", "w") as f:
-        result_dict = { k: v.to_dict() for k, v in results.items() }
-        json.dump(result_dict, f, indent=2)
-    print("Wrote /tmp/deadlines.json", file=sys.stderr)
+        print_deadline_table(results)
+        write_html_table(results, "/tmp/deadlines.html")
 
-    print_deadline_table(results)
-    write_html_table(results, "/tmp/deadlines.html")
+        print(f"Total: {_total_calls} API calls, ${_total_cost:.4f}", file=sys.stderr)
+        print("This may account to up to 15% of a claude session (resets 4 hourly).")
+        _crawler.quit()
 
-    print(f"Total: {_total_calls} API calls, ${_total_cost:.4f}", file=sys.stderr)
-    print("This may account to up to 15% of a claude session (resets 4 hourly).")
-
-    _crawler.quit()
 
 
 def render_only():
