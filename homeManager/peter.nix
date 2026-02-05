@@ -192,6 +192,11 @@ in
     ranger # command line file manager
     man-pages
     inputs.hosthog.packages.${stdenv.hostPlatform.system}.default
+    inputs.llm-agents.packages.${stdenv.hostPlatform.system}.pi
+    inputs.llm-agents.packages.${stdenv.hostPlatform.system}.claude-code
+    # claude-code
+    codex
+    gemini-cli
     flakepkgs.nix-top
   ];
 }

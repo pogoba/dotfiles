@@ -176,9 +176,6 @@
     iotop
     lsd
     tokei
-    claude-code
-    codex
-    gemini-cli
     #(pkgs.nerdfonts.override {
     #    fonts = ["FiraCode"];
     #})

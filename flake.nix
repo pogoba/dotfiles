@@ -79,6 +79,8 @@
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
 
+    llm-agents.url = "github:numtide/llm-agents.nix";
+
     nix-gaming.url = "github:fufexan/nix-gaming";
 
     ghostty.url = "github:ghostty-org/ghostty";
