@@ -120,12 +120,19 @@ options.subscribe = true
 --     username = 'okelmann',
 --     password = get_password(),
 -- }
-
+--
 io.write("Password for aenderboy@gmx.de:\n")
+status,password = pipe_from("~/.ssh/get_imapfilter_password.sh")
+if status ~= 0 then
+    io.write("Error getting password from keepassxc-cli\n")
+    os.exit(1)
+end
+password = password:gsub('[\r\n]', '')
 account2 = IMAP {
     server = 'imap.gmx.de',
     username = 'aenderboy@gmx.de',
-    password = get_password(),
+    -- password = get_password(),
+    password = password,
     ssl = "tls1.2",
 }
 
@@ -160,6 +167,9 @@ function aenderboy_spamfilter(account)
         "mind-mailing.de",
         "betragreport.de",
         "commerz-bank.com",
+        "GMX Magazin <mailings@mailings.gmx.net>",
+        "GMX Umfrage <mailings@mailings.gmx.net>",
+        "Declan4f6@att.net"
     }
     to_patterns = {
         -- spam mailing lists etc
@@ -194,11 +204,15 @@ io.write("\n")
 io.write(dump(folders))
 io.write("\n")
 
+aenderboy_spamfilter(account2)
+os.execute("thunderbird &")
+io.write("Continuing after starting Thunderbird...\n")
+
 while true do
-    aenderboy_spamfilter(account2)
     if not account2["INBOX"]:enter_idle() then
         sleep(300) -- fall back to polling
     end
+    aenderboy_spamfilter(account2)
 end
 --io.write(dump(account1["Inbox"]))
 --io.write("\n")
