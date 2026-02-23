@@ -61,7 +61,7 @@
   # service to kill processes when memory is low
   services.earlyoom = {
     enable = true;
-    # freeMemThreshold = 10; # 10 is default
+    freeMemThreshold = 5; # 10% is default
     enableNotifications = true;
   };
 
