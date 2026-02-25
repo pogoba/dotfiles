@@ -55,7 +55,13 @@ class Crawler:
     def save_pdf(self, url: str, filepath: str, timeout: int = 30):
         with self._lock:
             driver = self._get_driver()
-            driver.get(url)
+            for _ in range(5):
+                try:
+                    driver.get(url) # throws sometimes selenium.common.exceptions.WebDriverException. Retry a few times.
+                except Exception as e:
+                    progress_write(f"Error loading {url}: {e}")
+                finally:
+                    break
 
             # Wait for page to fully load
             WebDriverWait(driver, timeout).until(
@@ -407,11 +413,17 @@ def run_claude(
             capture_output=True,
             text=True,
         )
+        try:
+            output = json.loads(result.stdout)
+        except Exception:
+            pass
         if "An update to our Consumer Terms and Privacy Policy has taken effect" in result.stderr:
             # is a random message to prevent automated use?
             progress_write(f"Retrying Claude command after privacy policy message: {shlex.join(cmd)}")
         elif "error_during_execution" in getattr(result, "subtype", ""):
             progress_write(f"Retrying Claude command after claude-cli error: {'\n'.join(result.errors)}")
+        elif schema is not None and "structured_output" not in output:
+            progress_write(f"Retrying Claude command after missing json: {shlex.join(cmd)} ----- {output}")
         else:
             break
 
