@@ -309,6 +309,27 @@ class ConferenceEvent:
             raise ConsistencyError("Submission deadline missing")
         # maybe validate each deadline?
 
+    @classmethod
+    def from_dict(cls, data: dict) -> "ConferenceEvent":
+        event = cls(data["name"], data["year"], data["url"])
+        event.cycles_announced = data.get("cycles_announced", bool(data["cycles"]))
+        event.set_cycles(data["cycles"])
+        for d in data["deadlines"]:
+            deadline_type = DeadlineType(d["deadline_type"])
+            valid = d.get("valid", False)
+            deadline = Deadline(
+                is_announced=valid,
+                is_valid=valid,
+                deadline_type=deadline_type,
+                date=d.get("date", ""),
+                time=d.get("time", ""),
+                timezone=d.get("timezone", ""),
+                utc_offset=d.get("utc_offset", 0),
+                raw_string=d.get("raw_string", ""),
+            )
+            event.set_deadline(d["cycle"], deadline)
+        return event
+
     def to_dict(self) -> dict:
         """
         Returns:
@@ -330,6 +351,10 @@ class ConferenceEvent:
             }
         """
         return {
+            "name": self.name,
+            "year": self.year,
+            "url": self.url,
+            "cycles_announced": self.cycles_announced,
             "cycles": self.cycles,
             "deadlines": [
                 {
@@ -915,6 +940,7 @@ def render_only():
     """Re-render HTML from cached JSON."""
     with open("/tmp/deadlines.json") as f:
         results = json.load(f)
+    results = { k: ConferenceEvent.from_dict(v) for k, v in results.items() }
     print_deadline_table(results)
     write_html_table(results, "/tmp/deadlines.html")
 
