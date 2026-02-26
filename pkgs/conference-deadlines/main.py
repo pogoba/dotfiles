@@ -100,8 +100,9 @@ PREDICTION_HINTS = {
     ("ATC", 2026, "Based on user submitted information"): "2026-06-10"
 }
 
-FROM_YEAR=2020
-NOW=2026
+FROM_YEAR=2020 # crawl since this year
+NOW=2027 # crawl conferences until this year (usually you want NOW to be the next year actually)
+DISPLAY_UNTIL=2026 # display deadlines that are >= this year
 
 # List of (name, year, url) tuples
 CONFERENCES = [
@@ -765,6 +766,7 @@ def write_html_table(results: dict[str, ConferenceEvent], filepath: str):
         rows.append((hint_name, hint_year, hint_cycle, hint_date, True, None, ""))
 
     rows.sort(key=lambda r: r[3])  # Sort by date
+    rows = [row for row in rows if row[3] <= f"{DISPLAY_UNTIL}-12-31"]  # Filter deadlines too much in the future
 
     # Collect unique conference names for filter
     conf_names = sorted(set(r[0] for r in rows))
