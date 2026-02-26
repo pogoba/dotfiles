@@ -46,9 +46,9 @@
   #zramSwap.enable = true;
 
   # only kills cgroups. So either systemd services marked for killing under OOM, or (disabled by default) the entire user slice.
-  systemd.oomd.settings.OOM = {
-    DefaultMemoryPressureDurationSec = "10s";
-  };
+  # systemd.oomd.settings.OOM = {
+  #   DefaultMemoryPressureDurationSec = "10s";
+  # };
 
   # configure /proc/sys/* values
   # https://docs.kernel.org/admin-guide/sysrq.html?highlight=sysrq+trigger#how-do-i-use-the-magic-sysrq-key
@@ -59,11 +59,11 @@
   };
 
   # service to kill processes when memory is low
-  services.earlyoom = {
-    enable = true;
-    freeMemThreshold = 5; # 10% is default
-    enableNotifications = true;
-  };
+  # services.earlyoom = {
+  #   enable = true;
+  #   freeMemThreshold = 5; # 10% is default
+  #   enableNotifications = true;
+  # };
 
   boot.initrd.luks.devices = {
     "nixos-lukscrypt" = {
@@ -80,6 +80,13 @@
       fsType = "vfat";
     };
 
-  swapDevices = [ ];
+  # replace oomd and earlyoom with zswap:
+  swapDevices = [{ device = "/dev/cryptvl/swap"; }];
+  boot.kernelParams = [
+    "zswap.enabled=1" # enables zswap
+    "zswap.compressor=lz4" # compression algorithm
+    "zswap.max_pool_percent=20" # maximum percentage of RAM that zswap is allowed to use
+    "zswap.shrinker_enabled=1" # whether to shrink the pool proactively on high memory pressure
+  ];
 
 }
