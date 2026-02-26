@@ -58,22 +58,24 @@ class Crawler:
             for _ in range(5):
                 try:
                     driver.get(url) # throws sometimes selenium.common.exceptions.WebDriverException. Retry a few times.
+
+                    # Wait for page to fully load
+                    WebDriverWait(driver, timeout).until(
+                        lambda d: d.execute_script("return document.readyState") == "complete"
+                    )
+
+                    time.sleep(5) # give time for js rendering
+
+                    # Print to PDF
+                    pdf_base64 = driver.print_page()
+                    with open(filepath, "wb") as f:
+                        f.write(base64.b64decode(pdf_base64))
+
                 except Exception as e:
                     progress_write(f"Error loading {url}: {e}")
                 finally:
                     break
 
-            # Wait for page to fully load
-            WebDriverWait(driver, timeout).until(
-                lambda d: d.execute_script("return document.readyState") == "complete"
-            )
-
-            time.sleep(5) # give time for js rendering
-
-            # Print to PDF
-            pdf_base64 = driver.print_page()
-            with open(filepath, "wb") as f:
-                f.write(base64.b64decode(pdf_base64))
 
     def quit(self):
         if self._driver:
