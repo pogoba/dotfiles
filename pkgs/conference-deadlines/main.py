@@ -134,6 +134,17 @@ def conf_label(name: str, year: int) -> str:
     """Generate display label like SIGCOMM'26."""
     return f"{name}'{year % 100:02d}"
 
+DOCUMENT_CHECK_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "matches_requested_event": {
+            "type": "boolean",
+            "description": "Whether the document is about the referenced event/conference/journal (with matching year). Use false if the document does not contain related information, e.g., because it is an error page."
+        }
+    },
+    "required": ["matches_requested_event"]
+}
+
 CYCLES_SCHEMA = {
     "type": "object",
     "properties": {
@@ -501,16 +512,20 @@ def fetch_deadlines(name: str, url: str) -> ConferenceEvent:
     # Step 1: Fetch the URL content
     progress_write(f"  {name}: Reading website content...")
     fetch_output = run_claude(
-        prompt=f"Read the {pdf_path} PDF of the {name} website and summarize the page content",
+        prompt=f"Use the Read tool to read {pdf_path} (do NOT use Bash commands). Is it about {name} (pay attention that it is about the same year)?",
+        schema=json.dumps(DOCUMENT_CHECK_SCHEMA),
         allowed_tools=f"Read({pdf_path})",
     )
     session_id = fetch_output.get("session_id")
     if not session_id:
         raise ClaudeQueryError("No session_id returned from fetch")
-
-    page_content = fetch_output.get("result", "")
-    if not page_content:
-        raise ClaudeQueryError("Failed to fetch page content")
+    maybe_document_match = fetch_output.get("structured_output", {}).get("matches_requested_event")
+    if maybe_document_match is None:
+        progress_write(f"  {name}: WARNING: {fetch_output}")
+        raise ClaudeQueryError("Failed to read page content")
+    if not maybe_document_match:
+        progress_write(f"  {name}: Document does not match requested event. ")
+        return conference
 
     # Step 2: Extract submission cycles
     progress_write(f"  {name}: Extracting submission cycles...")
