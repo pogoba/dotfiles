@@ -909,7 +909,7 @@ def write_html_table(results: dict[str, ConferenceEvent], filepath: str):
 def main():
     results = {}
     try:
-        with ThreadPoolExecutor(max_workers=1) as executor:
+        with ThreadPoolExecutor(max_workers=16) as executor:
             futures = {
                 executor.submit(fetch_deadlines, conf_label(name, year), url): (conf_label(name, year), name, year, url)
                 for name, year, url in CONFERENCES
@@ -948,7 +948,7 @@ def main():
         write_html_table(results, "/tmp/deadlines.html")
 
         print(f"Total: {_total_calls} API calls, ${_total_cost:.4f}", file=sys.stderr)
-        print("This may account to up to 15% of a claude session (resets 4 hourly).")
+        print("This may account for >50% towards 5h limit and >10% weekly limit on anthropic max plan.")
         _crawler.quit()
 
 
