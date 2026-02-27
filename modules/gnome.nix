@@ -77,7 +77,6 @@
     ghostty
 
     vlc
-    obs-studio
     libreoffice
     gimp
     gthumb # photo folder viewer
@@ -117,7 +116,6 @@
     ausweisapp
     via # for qmk keyboard flashing
     zotero # academic paper manager. Useful plugin: https://retorque.re/zotero-better-bibtex/exporting/auto/index.html
-    kdePackages.kdenlive
 
     inputs.nix-gaming.packages.${pkgs.stdenv.hostPlatform.system}.osu-lazer-bin
 

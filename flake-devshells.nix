@@ -21,6 +21,7 @@
       networking = pkgs.callPackage ./devShells/networking.nix { inherit pkgs; };
       node = pkgs.callPackage ./devShells/node.nix { inherit pkgs; };
       python = pkgs.callPackage ./devShells/python.nix { inherit pkgs; };
+      recording = pkgs.callPackage ./devShells/recording.nix { };
       rust = pkgs.callPackage ./devShells/rust.nix { inherit pkgs; fenixPkgs = inputs'.fenix.packages; };
       sys-stats = pkgs.callPackage ./devShells/sys-stats.nix { inherit pkgs; };
       texra = pkgs.callPackage ./devShells/texra.nix { inherit pkgs; inherit (inputs) nixpkgs; };
