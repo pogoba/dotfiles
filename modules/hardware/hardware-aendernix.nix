@@ -31,6 +31,16 @@
     "kvm.report_ignored_msrs=0"
   ];
 
+  # at which dirty page amount the kernel will start writeback (default 10% of RAM -> ~3GB)
+  # vm.dirty_background_bytes 256 * 1024 * 1024 (0.25GB)
+
+  # at which dirty page amount the process iself will start writeback (default 20% of RAM -> ~6GB)
+  # vm.dirty_bytes 512 * 1024 * 1024 (0.5GB)
+
+  hardware.block.scheduler = {
+    "nvme*" = "mq-deadline"; # seems to make io scheduling fair between slices
+  };
+
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" "sr_mod" ];
   boot.initrd.kernelModules = [ "dm-snapshot" "vfio_pci" "vfio" "vfio_iommu_type1" ];
   # with linux 5.10 lts, BT audio works. With latest it doesnt.
