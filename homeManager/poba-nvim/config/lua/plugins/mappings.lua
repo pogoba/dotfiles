@@ -58,6 +58,12 @@ return {
 					end,
 					desc = "Find files",
 				},
+				["<leader>fl"] = {
+					function()
+						require("telescope").extensions.bibtex.bibtex()
+					end,
+					desc = "Find bibtex citation",
+				},
 
     		-- esc disables search highlighting and dismiss notifications
     		["<esc>"] = { ":nohlsearch<cr>:lua require(\"notify\").dismiss()<cr>", desc = "Clear search highlights and dismiss notifications" },
