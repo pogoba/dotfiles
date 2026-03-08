@@ -59,6 +59,7 @@
     # gnomeExtensions.noannoyance-fork
     gnomeExtensions.forge
     gnomeExtensions.ssh-search-provider-reborn
+    gnomeExtensions.resource-monitor
     # not as well wtf it should be
     # gnomeExtensions.noannoyance
     # gnomeExtensions.application-volume-mixer
