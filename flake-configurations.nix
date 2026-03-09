@@ -93,7 +93,7 @@ in
         inputs.nixos-hardware.nixosModules.lenovo-thinkpad-e14-amd
         ./config-common.nix
         ./modules/gnome.nix
-        # ./modules/kdePlasma.nix # overrides for gnome.nix to use KDE instead
+        ./modules/kdePlasma.nix # overrides for gnome.nix to use KDE instead
         ./modules/nokia.nix
       ];
       inherit specialArgs;

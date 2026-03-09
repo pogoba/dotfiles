@@ -1,12 +1,12 @@
 { ... }:
 {
   specialisation = {
-    # gnome = {
-    #   inheritParentConfig = true;
-    #   configuration = {
-    #     myKdePlasma = false;
-    #   };
-    # };
+    gnome = {
+      inheritParentConfig = true;
+      configuration = {
+        myKdePlasma.enable = false;
+      };
+    };
   };
   networking.hostName = "aenderpad"; # Define your hostname.
   networking.hostId = "faae4fe2"; # for zfs
