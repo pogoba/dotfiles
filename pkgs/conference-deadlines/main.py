@@ -834,8 +834,23 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
 
     # Build HTML
     row_height = 28
-    header_height = 24
+    year_height = 20
+    month_height = 24
+    header_height = year_height + month_height
     bar_height = row_height - 8
+
+    # Year markers
+    years = []
+    cursor_y = min_dt
+    while cursor_y < max_dt:
+        year_start = cursor_y
+        year_end = datetime(cursor_y.year + 1, 1, 1)
+        if year_end > max_dt:
+            year_end = max_dt
+        pct = (year_start - min_dt).days / total_days * 100
+        width = (year_end - year_start).days / total_days * 100
+        years.append((str(cursor_y.year), pct, width))
+        cursor_y = year_end
 
     html = '    <h2>Timeline</h2>\n'
     html += '    <div style="position: relative; overflow-x: auto; margin: 0 0 2em 0;">\n'
@@ -856,9 +871,14 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
     chart_height = header_height + len(bars) * row_height
     html += f'        <div style="flex: 1; position: relative; height: {chart_height}px;">\n'
 
+    # Year headers
+    for year_label, pct, width in years:
+        html += f'          <div style="position: absolute; left: {pct:.2f}%; top: 0; width: {width:.2f}%; height: {year_height}px; border-left: 1px solid #999; font-size: 0.8em; font-weight: bold; padding-left: 4px; color: #444; box-sizing: border-box; line-height: {year_height}px;">{year_label}</div>\n'
+
     # Month headers and grid lines
     for month_label, pct, width in months:
-        html += f'          <div style="position: absolute; left: {pct:.2f}%; top: 0; width: {width:.2f}%; height: {header_height}px; border-left: 1px solid #ccc; font-size: 0.75em; padding-left: 3px; color: #888; box-sizing: border-box; line-height: {header_height}px;">{month_label}</div>\n'
+        month_short = month_label[:3]  # Just "Jan", "Feb", etc. without year
+        html += f'          <div style="position: absolute; left: {pct:.2f}%; top: {year_height}px; width: {width:.2f}%; height: {month_height}px; border-left: 1px solid #ccc; font-size: 0.75em; padding-left: 3px; color: #888; box-sizing: border-box; line-height: {month_height}px;">{month_short}</div>\n'
         html += f'          <div style="position: absolute; left: {pct:.2f}%; top: {header_height}px; bottom: 0; border-left: 1px solid #eee;"></div>\n'
 
     # Row backgrounds (alternating)
