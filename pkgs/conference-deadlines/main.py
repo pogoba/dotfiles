@@ -785,7 +785,10 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
                 return d
         return None
 
-    bars = []
+    # Collect segments grouped by conference name
+    # segments_by_conf: name -> [(label, sub_date, notif_date, url)]
+    from collections import OrderedDict
+    segments_by_conf = {}
     for conf_key, event in results.items():
         for cycle in event.cycles:
             cycle_deadlines = event.deadlines.get(cycle, [])
@@ -802,16 +805,25 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
             sub_date = sub.date
             notif_date = notif.date if notif else None
 
-            bars.append((label, sub_date, notif_date, event.url, event.name))
+            segments_by_conf.setdefault(event.name, []).append((label, sub_date, notif_date, event.url))
 
-    if not bars:
+    if not segments_by_conf:
         return ""
 
-    bars.sort(key=lambda b: b[1])
+    # Sort segments within each conference by submission date
+    for name in segments_by_conf:
+        segments_by_conf[name].sort(key=lambda s: s[1])
+
+    # Sort conferences by their earliest submission date
+    conf_rows = sorted(segments_by_conf.items(), key=lambda kv: kv[1][0][1])
 
     # Determine time range from all dates
-    all_dates = [b[1] for b in bars]
-    all_dates += [b[2] for b in bars if b[2]]
+    all_dates = []
+    for _, segs in conf_rows:
+        for _, sub, notif, _ in segs:
+            all_dates.append(sub)
+            if notif:
+                all_dates.append(notif)
 
     min_date_str = min(all_dates)
     max_date_str = max(all_dates)
@@ -872,17 +884,13 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
 
     # Left labels column
     html += f'        <div style="flex: 0 0 140px; padding-top: {header_height}px;">\n'
-    for label, sub, notif, url, name in bars:
-        esc_label = label.replace("&", "&amp;").replace("<", "&lt;")
-        if url:
-            link = f'<a href="{url}" style="color: inherit; text-decoration: none;">{esc_label}</a>'
-        else:
-            link = esc_label
-        html += f'          <div data-conf="{name}" style="height: {row_height}px; line-height: {row_height}px; font-size: 0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px;">{link}</div>\n'
+    for name, segs in conf_rows:
+        esc_name = name.replace("&", "&amp;").replace("<", "&lt;")
+        html += f'          <div data-conf="{name}" style="height: {row_height}px; line-height: {row_height}px; font-size: 0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px;">{esc_name}</div>\n'
     html += '        </div>\n'
 
     # Chart area
-    chart_height = header_height + len(bars) * row_height
+    chart_height = header_height + len(conf_rows) * row_height
     html += f'        <div style="flex: 1; position: relative; height: {chart_height}px;">\n'
 
     # Year headers
@@ -896,30 +904,30 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
         html += f'          <div style="position: absolute; left: {pct:.2f}%; top: {header_height}px; bottom: 0; border-left: 1px solid #eee;"></div>\n'
 
     # Row backgrounds (alternating)
-    for i in range(len(bars)):
+    for i, (name, _) in enumerate(conf_rows):
         y = header_height + i * row_height
         bg = "#f9f9f9" if i % 2 == 0 else "#fff"
-        name = bars[i][4]
         html += f'          <div data-conf="{name}" style="position: absolute; left: 0; top: {y}px; right: 0; height: {row_height}px; background: {bg};"></div>\n'
 
-    # Bars
-    for i, (label, sub, notif, url, name) in enumerate(bars):
+    # Bars — multiple segments per row
+    for i, (name, segs) in enumerate(conf_rows):
         y = header_height + i * row_height + 4
-        sub_pct = date_to_pct(sub)
-        esc_label = label.replace("&", "&amp;").replace('"', "&quot;")
+        for seg_label, sub, notif, url in segs:
+            sub_pct = date_to_pct(sub)
+            esc_label = seg_label.replace("&", "&amp;").replace('"', "&quot;")
 
-        if notif:
-            notif_pct = date_to_pct(notif)
-            width_pct = max(notif_pct - sub_pct, 0.3)
-            tooltip = f"{esc_label}: {sub} &#x2192; {notif}"
-            # Main bar (submission to notification)
-            html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: {width_pct:.2f}%; height: {bar_height}px; background: #3498db; border-radius: 3px; opacity: 0.85; z-index: 1;" title="{tooltip}"></div>\n'
-            # Dark submission marker at left edge
-            html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: 3px; height: {bar_height}px; background: #1a5276; border-radius: 1px; z-index: 1;" title="Submission: {sub}"></div>\n'
-        else:
-            tooltip = f"{esc_label}: submission {sub}"
-            # Submission-only diamond marker
-            html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: 8px; height: {bar_height}px; background: #2c3e50; border-radius: 2px; opacity: 0.85; z-index: 1; transform: translateX(-4px);" title="{tooltip}"></div>\n'
+            if notif:
+                notif_pct = date_to_pct(notif)
+                width_pct = max(notif_pct - sub_pct, 0.3)
+                tooltip = f"{esc_label}: {sub} &#x2192; {notif}"
+                # Main bar (submission to notification)
+                html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: {width_pct:.2f}%; height: {bar_height}px; background: #3498db; border-radius: 3px; opacity: 0.85; z-index: 1;" title="{tooltip}"></div>\n'
+                # Dark submission marker at left edge
+                html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: 3px; height: {bar_height}px; background: #1a5276; border-radius: 1px; z-index: 1;" title="Submission: {sub}"></div>\n'
+            else:
+                tooltip = f"{esc_label}: submission {sub}"
+                # Submission-only marker
+                html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: 8px; height: {bar_height}px; background: #2c3e50; border-radius: 2px; opacity: 0.85; z-index: 1; transform: translateX(-4px);" title="{tooltip}"></div>\n'
 
     html += '        </div>\n'
     html += '      </div>\n'
