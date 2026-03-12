@@ -818,11 +818,6 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
         dt = datetime.strptime(date_str, "%Y-%m-%d")
         return (dt - min_dt).days / total_days * 100
 
-    # Today marker
-    today = datetime.now()
-    today_pct = (today - min_dt).days / total_days * 100
-    show_today = 0 <= today_pct <= 100
-
     # Month markers
     months = []
     cursor = min_dt
@@ -866,11 +861,6 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
         html += f'          <div style="position: absolute; left: {pct:.2f}%; top: 0; width: {width:.2f}%; height: {header_height}px; border-left: 1px solid #ccc; font-size: 0.75em; padding-left: 3px; color: #888; box-sizing: border-box; line-height: {header_height}px;">{month_label}</div>\n'
         html += f'          <div style="position: absolute; left: {pct:.2f}%; top: {header_height}px; bottom: 0; border-left: 1px solid #eee;"></div>\n'
 
-    # Today line
-    if show_today:
-        html += f'          <div style="position: absolute; left: {today_pct:.2f}%; top: 0; bottom: 0; border-left: 2px solid #e74c3c; z-index: 2;"></div>\n'
-        html += f'          <div style="position: absolute; left: {today_pct:.2f}%; top: 0; font-size: 0.7em; color: #e74c3c; transform: translateX(-50%); z-index: 2;">today</div>\n'
-
     # Row backgrounds (alternating)
     for i in range(len(bars)):
         y = header_height + i * row_height
@@ -904,8 +894,6 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
     html += '      <div style="font-size: 0.8em; color: #666; margin-top: 0.5em;">\n'
     html += '        <span style="display: inline-block; width: 12px; height: 12px; background: #3498db; border-radius: 2px; vertical-align: middle;"></span> Submission &#x2192; Notification\n'
     html += '        &nbsp;&nbsp;<span style="display: inline-block; width: 8px; height: 12px; background: #2c3e50; border-radius: 2px; vertical-align: middle;"></span> Submission only\n'
-    if show_today:
-        html += '        &nbsp;&nbsp;<span style="display: inline-block; width: 2px; height: 12px; background: #e74c3c; vertical-align: middle;"></span> Today\n'
     html += '      </div>\n'
     html += '    </div>\n'
 
