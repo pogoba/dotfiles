@@ -593,9 +593,11 @@ def fetch_deadlines(name: str, url: str) -> ConferenceEvent:
         for d in cycle_deadlines:
             conference.set_deadline(cycle, Deadline.from_json(d))
 
-    # Merge - replace matching entries with submission deadlines
+    # Validation
     progress_write(f"  {name}: Validating results...")
     for cycle in conference.cycles:
+        # We should have gotten the same main submission deadline in both queries. Deduplicate else warn.
+        # TODO: actually, we only remove deadlines that are at the same time as the submission, but are no submission.
         deadlines = conference.deadlines.get(cycle, [])
         submission: Deadline = [ d for d in deadlines if d.deadline_type == DeadlineType.SUBMISSION ][0]
         submission_duplicates: list[Deadline] = [ d for d in deadlines if d.deadline_type != DeadlineType.SUBMISSION and submission.time_equals(d) ]
@@ -607,6 +609,11 @@ def fetch_deadlines(name: str, url: str) -> ConferenceEvent:
             # raise ClaudeQueryError(
             #     f"Submission deadline ({submission.date}, {submission.time}) not found in all_deadlines" # marker
             # )
+
+        # enforce that we only have one submission deadline
+        other_submissions: list[Deadline] = [ d for d in deadlines if d.deadline_type == DeadlineType.SUBMISSION and not submission.time_equals(d) ]
+        _ = [ deadlines.remove(d) for d in other_submissions ]
+
 
     print(conference.to_dict())
     if len(conference.deadlines) == 0:
