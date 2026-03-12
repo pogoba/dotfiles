@@ -769,9 +769,147 @@ def predict_deadlines(rows: list, target_year: int) -> list:
 
 
 def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
-    """Generate gnatt chart HTML for deadlines."""
-    # TODO implement
-    return "<p>Gnatt chart not implemented yet</p>"
+    """Generate Gantt chart HTML showing submission-to-notification ranges."""
+
+    # Collect bars: (label, submission_date, notification_date, url, conf_name)
+    bars = []
+    for conf_key, event in results.items():
+        for cycle in event.cycles:
+            sub = event.get_deadline(cycle, DeadlineType.SUBMISSION)
+            notif = event.get_deadline(cycle, DeadlineType.NOTIFICATION)
+
+            if not sub or not sub.is_valid or not sub.date:
+                continue
+
+            label = conf_label(event.name, event.year)
+            if cycle:
+                label += f" ({cycle})"
+
+            sub_date = sub.date
+            notif_date = notif.date if (notif and notif.is_valid and notif.date) else None
+
+            bars.append((label, sub_date, notif_date, event.url, event.name))
+
+    if not bars:
+        return ""
+
+    bars.sort(key=lambda b: b[1])
+
+    # Determine time range from all dates
+    all_dates = [b[1] for b in bars]
+    all_dates += [b[2] for b in bars if b[2]]
+
+    min_date_str = min(all_dates)
+    max_date_str = max(all_dates)
+
+    # Pad to first of month / end of month
+    min_dt = datetime.strptime(min_date_str, "%Y-%m-%d").replace(day=1)
+    max_dt = datetime.strptime(max_date_str, "%Y-%m-%d")
+    if max_dt.month == 12:
+        max_dt = max_dt.replace(year=max_dt.year + 1, month=1, day=1)
+    else:
+        max_dt = max_dt.replace(month=max_dt.month + 1, day=1)
+
+    total_days = (max_dt - min_dt).days
+    if total_days <= 0:
+        return ""
+
+    def date_to_pct(date_str):
+        dt = datetime.strptime(date_str, "%Y-%m-%d")
+        return (dt - min_dt).days / total_days * 100
+
+    # Today marker
+    today = datetime.now()
+    today_pct = (today - min_dt).days / total_days * 100
+    show_today = 0 <= today_pct <= 100
+
+    # Month markers
+    months = []
+    cursor = min_dt
+    while cursor < max_dt:
+        pct = (cursor - min_dt).days / total_days * 100
+        month_label = cursor.strftime("%b '%y")
+        if cursor.month == 12:
+            next_month = cursor.replace(year=cursor.year + 1, month=1, day=1)
+        else:
+            next_month = cursor.replace(month=cursor.month + 1, day=1)
+        width = (next_month - cursor).days / total_days * 100
+        months.append((month_label, pct, width))
+        cursor = next_month
+
+    # Build HTML
+    row_height = 28
+    header_height = 24
+    bar_height = row_height - 8
+
+    html = '    <h2>Timeline</h2>\n'
+    html += '    <div style="position: relative; overflow-x: auto; margin: 0 0 2em 0;">\n'
+    html += '      <div style="display: flex; min-width: 800px;">\n'
+
+    # Left labels column
+    html += f'        <div style="flex: 0 0 140px; padding-top: {header_height}px;">\n'
+    for label, sub, notif, url, name in bars:
+        esc_label = label.replace("&", "&amp;").replace("<", "&lt;")
+        if url:
+            link = f'<a href="{url}" style="color: inherit; text-decoration: none;">{esc_label}</a>'
+        else:
+            link = esc_label
+        html += f'          <div data-conf="{name}" style="height: {row_height}px; line-height: {row_height}px; font-size: 0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px;">{link}</div>\n'
+    html += '        </div>\n'
+
+    # Chart area
+    chart_height = header_height + len(bars) * row_height
+    html += f'        <div style="flex: 1; position: relative; height: {chart_height}px;">\n'
+
+    # Month headers and grid lines
+    for month_label, pct, width in months:
+        html += f'          <div style="position: absolute; left: {pct:.2f}%; top: 0; width: {width:.2f}%; height: {header_height}px; border-left: 1px solid #ccc; font-size: 0.75em; padding-left: 3px; color: #888; box-sizing: border-box; line-height: {header_height}px;">{month_label}</div>\n'
+        html += f'          <div style="position: absolute; left: {pct:.2f}%; top: {header_height}px; bottom: 0; border-left: 1px solid #eee;"></div>\n'
+
+    # Today line
+    if show_today:
+        html += f'          <div style="position: absolute; left: {today_pct:.2f}%; top: 0; bottom: 0; border-left: 2px solid #e74c3c; z-index: 2;"></div>\n'
+        html += f'          <div style="position: absolute; left: {today_pct:.2f}%; top: 0; font-size: 0.7em; color: #e74c3c; transform: translateX(-50%); z-index: 2;">today</div>\n'
+
+    # Row backgrounds (alternating)
+    for i in range(len(bars)):
+        y = header_height + i * row_height
+        bg = "#f9f9f9" if i % 2 == 0 else "#fff"
+        name = bars[i][4]
+        html += f'          <div data-conf="{name}" style="position: absolute; left: 0; top: {y}px; right: 0; height: {row_height}px; background: {bg};"></div>\n'
+
+    # Bars
+    for i, (label, sub, notif, url, name) in enumerate(bars):
+        y = header_height + i * row_height + 4
+        sub_pct = date_to_pct(sub)
+        esc_label = label.replace("&", "&amp;").replace('"', "&quot;")
+
+        if notif:
+            notif_pct = date_to_pct(notif)
+            width_pct = max(notif_pct - sub_pct, 0.3)
+            tooltip = f"{esc_label}: {sub} &#x2192; {notif}"
+            # Main bar (submission to notification)
+            html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: {width_pct:.2f}%; height: {bar_height}px; background: #3498db; border-radius: 3px; opacity: 0.85; z-index: 1;" title="{tooltip}"></div>\n'
+            # Dark submission marker at left edge
+            html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: 3px; height: {bar_height}px; background: #1a5276; border-radius: 1px; z-index: 1;" title="Submission: {sub}"></div>\n'
+        else:
+            tooltip = f"{esc_label}: submission {sub}"
+            # Submission-only diamond marker
+            html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: 8px; height: {bar_height}px; background: #2c3e50; border-radius: 2px; opacity: 0.85; z-index: 1; transform: translateX(-4px);" title="{tooltip}"></div>\n'
+
+    html += '        </div>\n'
+    html += '      </div>\n'
+
+    # Legend
+    html += '      <div style="font-size: 0.8em; color: #666; margin-top: 0.5em;">\n'
+    html += '        <span style="display: inline-block; width: 12px; height: 12px; background: #3498db; border-radius: 2px; vertical-align: middle;"></span> Submission &#x2192; Notification\n'
+    html += '        &nbsp;&nbsp;<span style="display: inline-block; width: 8px; height: 12px; background: #2c3e50; border-radius: 2px; vertical-align: middle;"></span> Submission only\n'
+    if show_today:
+        html += '        &nbsp;&nbsp;<span style="display: inline-block; width: 2px; height: 12px; background: #e74c3c; vertical-align: middle;"></span> Today\n'
+    html += '      </div>\n'
+    html += '    </div>\n'
+
+    return html
 
 
 def write_html_table(results: dict[str, ConferenceEvent], filepath: str):
@@ -853,13 +991,14 @@ def write_html_table(results: dict[str, ConferenceEvent], filepath: str):
         <div id="conf-filter">
 """
 
-    html += html_gnatt_chart(results)
-
     for conf in conf_names:
         html += f'            <label><input type="checkbox" value="{conf}" checked> {conf}</label>\n'
     html += """        </div>
     </details>
 """
+
+    html += html_gnatt_chart(results)
+
     # Group by deadline year (descending), then by month
     years = {}
     for row in rows:
