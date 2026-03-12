@@ -185,6 +185,10 @@ SINGLE_DEADLINE_SCHEMA = {
             "type": "integer",
             "description": "Timezone offset from UTC in hours, e.g. -12 for AoE, -8 for PST, 0 for UTC"
         },
+        "deadline_type": {
+            "type": "string",
+            "description": "One of 'submission', 'notification', or 'unknown'. Use 'notification' for when authors are notified about acceptance/rejection. Use 'unknown' for other deadlines such as rebuttal, revision, etc.",
+        },
         "raw_string": {
             "type": "string",
             "description": "Exact quote from website containing the deadline type and date, e.g. 'Abstract registration: Friday, January 30, 2026 AoE'"
@@ -206,7 +210,18 @@ OTHER_DEADLINES_SCHEMA = {
 
 class DeadlineType(Enum):
     SUBMISSION = "submission"
+    NOTIFICATION = "notification" # notification of authors about acceptance/rejection
     UNKNOWN = "unknown"
+
+    @staticmethod
+    def parse(s: str) -> "DeadlineType":
+        s = s.lower()
+        if "submit" in s:
+            return DeadlineType.SUBMISSION
+        elif "notification" in s:
+            return DeadlineType.NOTIFICATION
+        else:
+            return DeadlineType.UNKNOWN
 
 @dataclass
 class Deadline:
@@ -237,10 +252,11 @@ class Deadline:
         )
 
     @classmethod
-    def from_json(cls, item: dict, deadline_type: DeadlineType) -> "Deadline":
+    def from_json(cls, item: dict, deadline_type: DeadlineType | None = None) -> "Deadline":
         assert isinstance(item, dict)
-        assert isinstance(deadline_type, DeadlineType)
         is_valid = validate_deadline(item) is None
+        if deadline_type is None:
+            deadline_type = DeadlineType.parse(item.get("deadline_type"))
         deadline = Deadline(
             is_announced=item.get("is_announced"),
             is_valid=is_valid,
@@ -332,7 +348,7 @@ class ConferenceEvent:
         event.cycles_announced = data.get("cycles_announced", bool(data["cycles"]))
         event.set_cycles(data["cycles"])
         for d in data["deadlines"]:
-            deadline_type = DeadlineType(d["deadline_type"])
+            deadline_type = DeadlineType.parse(d["deadline_type"])
             valid = d.get("valid", False)
             deadline = Deadline(
                 is_announced=valid,
@@ -558,7 +574,7 @@ def fetch_deadlines(name: str, url: str) -> ConferenceEvent:
         progress_write(f"DEBUG {name} extract subission of cycle {cycle}: {sub_output}")
         sub_deadline = sub_output.get("structured_output")
         if sub_deadline:
-            conference.set_deadline(cycle, Deadline.from_json(sub_deadline, DeadlineType.SUBMISSION))
+            conference.set_deadline(cycle, Deadline.from_json(sub_deadline, deadline_type=DeadlineType.SUBMISSION))
         else:
             progress_write(f"  {name}: WARNING: {sub_output}")
             conference.set_deadline(cycle, Deadline.invalid(DeadlineType.SUBMISSION))
@@ -575,7 +591,7 @@ def fetch_deadlines(name: str, url: str) -> ConferenceEvent:
         progress_write(f"DEBUG {name} extract all of cycle {cycle}: {all_output}")
         cycle_deadlines = all_output.get("structured_output", {}).get("deadlines", [])
         for d in cycle_deadlines:
-            conference.set_deadline(cycle, Deadline.from_json(d, DeadlineType.UNKNOWN))
+            conference.set_deadline(cycle, Deadline.from_json(d))
 
     # Merge - replace matching entries with submission deadlines
     progress_write(f"  {name}: Validating results...")
