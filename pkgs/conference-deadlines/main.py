@@ -123,10 +123,15 @@ CONFERENCES = [
     *[("OSDI", y, f"https://www.usenix.org/conference/osdi{y % 100:02d}/call-for-papers") for y in range(2018, NOW+1)],
 
     *[("NINES", 2026, "https://nines-conference.org/cfp")],
+    *[("ATC", y, f"https://sigops.org/s/conferences/atc/{y}/cfp.html") for y in range(2026, NOW+1)],
 
     # # conext server often returns randomly broken content. Also claude refuses to evaluate the javascript needed to read the website.
     *[("CoNEXT", y, f"https://conferences2.sigcomm.org/co-next/{y}/#!/cfp") for y in range(2012, NOW+1)],
     *[("SOSP", y, f"https://sigops.org/s/conferences/sosp/{y}/cfp.html") for y in range(2026, NOW+1)],
+
+    # Note down some urls here:
+    # https://www.asplos-conference.org/asplos2026/call-for-papers-asplos27/ asplos often does early cfp announcements on the previous years website. Where exactly is different every time.
+    # some usenix conferences also do early announcements on the homepage instead of a separate cfp page, when the page still sort of under construction
 ]
 
 
@@ -473,6 +478,7 @@ def run_claude(
             pass
         else:
             if "You've hit your limit" in output.get("result", ""):
+                # currently, using --json-scheme means that we just block indefinitely when hitting the limit instead of getting an error
                 raise ClaudeUsageLimitError()
         progress_write(f"Command failed: {shlex.join(cmd)}")
         progress_write(f"stdout: {result.stdout}")
@@ -534,6 +540,7 @@ def fetch_deadlines(name: str, url: str) -> ConferenceEvent:
         schema=json.dumps(CYCLES_SCHEMA),
         session_id=session_id,
     )
+    progress_write(f"DEBUG {name} extract cycles {cycles_output}")
     maybe_cycles = cycles_output.get("structured_output", {}).get("cycles")
     if maybe_cycles is None:
         progress_write(f"  {name}: {cycles_output}")
@@ -548,6 +555,7 @@ def fetch_deadlines(name: str, url: str) -> ConferenceEvent:
             schema=json.dumps(SINGLE_DEADLINE_SCHEMA),
             session_id=session_id,
         )
+        progress_write(f"DEBUG {name} extract subission of cycle {cycle}: {sub_output}")
         sub_deadline = sub_output.get("structured_output")
         if sub_deadline:
             conference.set_deadline(cycle, Deadline.from_json(sub_deadline, DeadlineType.SUBMISSION))
@@ -564,6 +572,7 @@ def fetch_deadlines(name: str, url: str) -> ConferenceEvent:
             schema=json.dumps(OTHER_DEADLINES_SCHEMA),
             session_id=session_id,
         )
+        progress_write(f"DEBUG {name} extract all of cycle {cycle}: {all_output}")
         cycle_deadlines = all_output.get("structured_output", {}).get("deadlines", [])
         for d in cycle_deadlines:
             conference.set_deadline(cycle, Deadline.from_json(d, DeadlineType.UNKNOWN))
@@ -583,6 +592,9 @@ def fetch_deadlines(name: str, url: str) -> ConferenceEvent:
             #     f"Submission deadline ({submission.date}, {submission.time}) not found in all_deadlines" # marker
             # )
 
+    print(conference.to_dict())
+    if len(conference.deadlines) == 0:
+        print(f"ERROR empty {conference.name}")
     return conference
 
 
@@ -895,7 +907,9 @@ def write_html_table(results: dict[str, ConferenceEvent], filepath: str):
         <a href="https://github.com/pogobanane/dotfiles/tree/master/pkgs/conference-deadlines">Source</a>
         Inspired by:
         <a href="https://dants.github.io/index_sysvenues_deadline.html">Dan Tsafrir</a>,
-        <a href="https://www.os.is.s.u-tokyo.ac.jp/conf/">Takahiro Shinagawa</a>
+        <a href="https://www.os.is.s.u-tokyo.ac.jp/conf/">Takahiro Shinagawa</a>,
+        <a href="https://github.com/paperswithcode/ai-deadlines">ai-deadlines</a>,
+        <a href="https://casys-kaist.github.io/">CASYS KAIST</a>
     </footer>
 </body>
 </html>
