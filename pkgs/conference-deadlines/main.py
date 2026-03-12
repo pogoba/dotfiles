@@ -779,13 +779,20 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
     """Generate Gantt chart HTML showing submission-to-notification ranges."""
 
     # Collect bars: (label, submission_date, notification_date, url, conf_name)
+    def first_valid(deadlines, dtype):
+        for d in deadlines:
+            if d.deadline_type == dtype and d.is_valid and d.date:
+                return d
+        return None
+
     bars = []
     for conf_key, event in results.items():
         for cycle in event.cycles:
-            sub = event.get_deadline(cycle, DeadlineType.SUBMISSION)
-            notif = event.get_deadline(cycle, DeadlineType.NOTIFICATION)
+            cycle_deadlines = event.deadlines.get(cycle, [])
+            sub = first_valid(cycle_deadlines, DeadlineType.SUBMISSION)
+            notif = first_valid(cycle_deadlines, DeadlineType.NOTIFICATION)
 
-            if not sub or not sub.is_valid or not sub.date:
+            if not sub:
                 continue
 
             label = conf_label(event.name, event.year)
@@ -793,7 +800,7 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
                 label += f" ({cycle})"
 
             sub_date = sub.date
-            notif_date = notif.date if (notif and notif.is_valid and notif.date) else None
+            notif_date = notif.date if notif else None
 
             bars.append((label, sub_date, notif_date, event.url, event.name))
 
