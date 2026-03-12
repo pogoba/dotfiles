@@ -216,7 +216,7 @@ class DeadlineType(Enum):
     @staticmethod
     def parse(s: str) -> "DeadlineType":
         s = s.lower()
-        if "submit" in s:
+        if "submission" in s:
             return DeadlineType.SUBMISSION
         elif "notification" in s:
             return DeadlineType.NOTIFICATION
@@ -768,6 +768,12 @@ def predict_deadlines(rows: list, target_year: int) -> list:
     return predictions
 
 
+def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
+    """Generate gnatt chart HTML for deadlines."""
+    # TODO implement
+    return "<p>Gnatt chart not implemented yet</p>"
+
+
 def write_html_table(results: dict[str, ConferenceEvent], filepath: str):
     """Write deadline table as HTML file."""
 
@@ -846,6 +852,9 @@ def write_html_table(results: dict[str, ConferenceEvent], filepath: str):
         <summary>Filter conferences</summary>
         <div id="conf-filter">
 """
+
+    html += html_gnatt_chart(results)
+
     for conf in conf_names:
         html += f'            <label><input type="checkbox" value="{conf}" checked> {conf}</label>\n'
     html += """        </div>
