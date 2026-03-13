@@ -787,9 +787,9 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
         return None
 
     # Collect segments grouped by conference name
-    # segments_by_conf: name -> [(label, sub_date, notif_date, url)]
-    from collections import OrderedDict
+    # segments_by_conf: name -> [(label, sub_date, notif_date, url, predicted)]
     segments_by_conf = {}
+    pred_rows = []  # all years, for predict_deadlines
     for conf_key, event in results.items():
         for cycle in event.cycles:
             cycle_deadlines = event.deadlines.get(cycle, [])
@@ -806,8 +806,23 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
             sub_date = sub.date
             notif_date = notif.date if notif else None
 
+            pred_rows.append((event.name, event.year, cycle, sub_date, False, None, event.url))
             if sub_date >= f"{GNATT_FROM}-01-01":
-                segments_by_conf.setdefault(event.name, []).append((label, sub_date, notif_date, event.url))
+                segments_by_conf.setdefault(event.name, []).append((label, sub_date, notif_date, event.url, False))
+
+    # Add predictions
+    predictions = predict_deadlines(pred_rows, NOW)
+    pred_rows.extend(predictions)
+    predictions_next = predict_deadlines(pred_rows, NOW + 1)
+    predictions_next = [p for p in predictions_next if p[3].startswith(str(NOW))]
+    for name, year, cycle, date, predicted, *_ in predictions + predictions_next:
+        if not predicted:
+            continue
+        label = conf_label(name, year)
+        if cycle:
+            label += f" ({cycle})"
+        if date >= f"{GNATT_FROM}-01-01":
+            segments_by_conf.setdefault(name, []).append((label, date, None, "", True))
 
     if not segments_by_conf:
         return ""
@@ -822,7 +837,7 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
     # Determine time range from all dates
     all_dates = []
     for _, segs in conf_rows:
-        for _, sub, notif, _ in segs:
+        for _, sub, notif, _, _ in segs:
             all_dates.append(sub)
             if notif:
                 all_dates.append(notif)
@@ -917,7 +932,7 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
     # Bars — multiple segments per row
     for i, (name, segs) in enumerate(conf_rows):
         y = header_height + i * row_height + 4
-        for seg_label, sub, notif, url in segs:
+        for seg_label, sub, notif, url, predicted in segs:
             sub_pct = date_to_pct(sub)
             esc_label = seg_label.replace("&", "&amp;").replace('"', "&quot;")
 
@@ -925,14 +940,19 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
                 notif_pct = date_to_pct(notif)
                 width_pct = max(notif_pct - sub_pct, 0.3)
                 tooltip = f"{esc_label}: {sub} &#x2192; {notif}"
+                bg = "#a9cce3" if predicted else "#3498db"
+                edge_bg = "#5b7d95" if predicted else "#1a5276"
                 # Main bar (submission to notification)
-                html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: {width_pct:.2f}%; height: {bar_height}px; background: #3498db; border-radius: 3px; opacity: 0.85; z-index: 1;" title="{tooltip}"></div>\n'
+                html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: {width_pct:.2f}%; height: {bar_height}px; background: {bg}; border-radius: 3px; opacity: 0.85; z-index: 1;" title="{tooltip}"></div>\n'
                 # Dark submission marker at left edge
-                html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: 3px; height: {bar_height}px; background: #1a5276; border-radius: 1px; z-index: 1;" title="Submission: {sub}"></div>\n'
+                html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: 3px; height: {bar_height}px; background: {edge_bg}; border-radius: 1px; z-index: 1;" title="Submission: {sub}"></div>\n'
             else:
                 tooltip = f"{esc_label}: submission {sub}"
+                if predicted:
+                    tooltip += " (predicted)"
+                bg = "#999" if predicted else "#2c3e50"
                 # Submission-only marker
-                html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: 8px; height: {bar_height}px; background: #2c3e50; border-radius: 2px; opacity: 0.85; z-index: 1; transform: translateX(-4px);" title="{tooltip}"></div>\n'
+                html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: 8px; height: {bar_height}px; background: {bg}; border-radius: 2px; opacity: 0.85; z-index: 1; transform: translateX(-4px);" title="{tooltip}"></div>\n'
 
     html += '        </div>\n'
     html += '      </div>\n'  # close min-width wrapper
@@ -943,6 +963,7 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
     html += '  <div style="font-size: 0.8em; color: #666; margin-top: 0.5em;">\n'
     html += '    <span style="display: inline-block; width: 12px; height: 12px; background: #3498db; border-radius: 2px; vertical-align: middle;"></span> Submission &#x2192; Notification\n'
     html += '    &nbsp;&nbsp;<span style="display: inline-block; width: 8px; height: 12px; background: #2c3e50; border-radius: 2px; vertical-align: middle;"></span> Submission only\n'
+    html += '    &nbsp;&nbsp;<span style="display: inline-block; width: 8px; height: 12px; background: #999; border-radius: 2px; vertical-align: middle;"></span> Predicted\n'
     html += '  </div>\n'
 
     return html
