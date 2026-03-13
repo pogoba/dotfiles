@@ -4,7 +4,7 @@
     gnome = {
       inheritParentConfig = true;
       configuration = {
-        myKdePlasma.enable = false;
+        myKdePlasma = false;
       };
     };
   };
