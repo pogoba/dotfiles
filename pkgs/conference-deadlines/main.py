@@ -103,6 +103,7 @@ PREDICTION_HINTS = {
 FROM_YEAR=2020 # crawl since this year
 NOW=2027 # crawl conferences until this year (usually you want NOW to be the next year actually)
 DISPLAY_UNTIL=2026 # display deadlines that are >= this year
+GNATT_FROM=DISPLAY_UNTIL-1
 
 # List of (name, year, url) tuples
 CONFERENCES = [
@@ -805,7 +806,8 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
             sub_date = sub.date
             notif_date = notif.date if notif else None
 
-            segments_by_conf.setdefault(event.name, []).append((label, sub_date, notif_date, event.url))
+            if sub_date >= f"{GNATT_FROM}-01-01":
+                segments_by_conf.setdefault(event.name, []).append((label, sub_date, notif_date, event.url))
 
     if not segments_by_conf:
         return ""
@@ -879,19 +881,22 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
         cursor_y = year_end
 
     html = '    <h2>Timeline</h2>\n'
-    html += '    <div style="position: relative; overflow-x: auto; margin: 0 0 2em 0;">\n'
-    html += '      <div style="display: flex; min-width: 800px;">\n'
+    html += '    <div style="display: flex; margin: 0 0 2em 0;">\n'
 
-    # Left labels column
-    html += f'        <div style="flex: 0 0 140px; padding-top: {header_height}px;">\n'
+    # Left labels column (outside scroll area)
+    html += f'      <div style="flex: 0 0 140px; padding-top: {header_height}px;">\n'
     for name, segs in conf_rows:
         esc_name = name.replace("&", "&amp;").replace("<", "&lt;")
-        html += f'          <div data-conf="{name}" style="height: {row_height}px; line-height: {row_height}px; font-size: 0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px;">{esc_name}</div>\n'
-    html += '        </div>\n'
+        html += f'        <div data-conf="{name}" style="height: {row_height}px; line-height: {row_height}px; font-size: 0.85em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 8px;">{esc_name}</div>\n'
+    html += '      </div>\n'
+
+    # Scrollable chart area
+    html += '      <div style="flex: 1; overflow-x: auto;">\n'
+    html += '        <div style="min-width: 800px; position: relative;">\n'
 
     # Chart area
     chart_height = header_height + len(conf_rows) * row_height
-    html += f'        <div style="flex: 1; position: relative; height: {chart_height}px;">\n'
+    html += f'        <div style="position: relative; height: {chart_height}px;">\n'
 
     # Year headers
     for year_label, pct, width in years:
@@ -930,14 +935,15 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
                 html += f'          <div data-conf="{name}" style="position: absolute; left: {sub_pct:.2f}%; top: {y}px; width: 8px; height: {bar_height}px; background: #2c3e50; border-radius: 2px; opacity: 0.85; z-index: 1; transform: translateX(-4px);" title="{tooltip}"></div>\n'
 
     html += '        </div>\n'
-    html += '      </div>\n'
+    html += '      </div>\n'  # close min-width wrapper
+    html += '    </div>\n'  # close scrollable area
+    html += '  </div>\n'  # close flex container
 
     # Legend
-    html += '      <div style="font-size: 0.8em; color: #666; margin-top: 0.5em;">\n'
-    html += '        <span style="display: inline-block; width: 12px; height: 12px; background: #3498db; border-radius: 2px; vertical-align: middle;"></span> Submission &#x2192; Notification\n'
-    html += '        &nbsp;&nbsp;<span style="display: inline-block; width: 8px; height: 12px; background: #2c3e50; border-radius: 2px; vertical-align: middle;"></span> Submission only\n'
-    html += '      </div>\n'
-    html += '    </div>\n'
+    html += '  <div style="font-size: 0.8em; color: #666; margin-top: 0.5em;">\n'
+    html += '    <span style="display: inline-block; width: 12px; height: 12px; background: #3498db; border-radius: 2px; vertical-align: middle;"></span> Submission &#x2192; Notification\n'
+    html += '    &nbsp;&nbsp;<span style="display: inline-block; width: 8px; height: 12px; background: #2c3e50; border-radius: 2px; vertical-align: middle;"></span> Submission only\n'
+    html += '  </div>\n'
 
     return html
 
