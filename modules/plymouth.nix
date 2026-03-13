@@ -1,5 +1,5 @@
 { pkgs, lib, ... }: let
-  mytheme = "glowing";
+  mytheme = "spinner_alt";
   wallpaper = builtins.path {
     path = ../users-hm/Jochberg_Nixos_v2.png;
     name = "background.png";
@@ -7,10 +7,22 @@
   baseTheme = pkgs.adi1090x-plymouth-themes.override {
     selected_themes = [ mytheme ];
   };
-  customTheme = pkgs.runCommand "plymouth-theme-${mytheme}-custom" {} ''
+  customTheme = pkgs.runCommand "plymouth-theme-${mytheme}-custom" {
+    nativeBuildInputs = [ pkgs.imagemagick ];
+  } ''
     mkdir -p $out/share/plymouth/themes
     cp -r ${baseTheme}/share/plymouth/themes/${mytheme} $out/share/plymouth/themes/${mytheme}
     chmod -R +w $out
+
+    # Convert black to alpha on progress images (GIMP-style color-to-alpha)
+    for f in $out/share/plymouth/themes/${mytheme}/progress-*.png; do
+      magick "$f" -alpha on \
+        -channel A -fx 'max(r,max(g,b))' \
+        -channel R -fx 'a>0.00001?r/a:0' \
+        -channel G -fx 'a>0.00001?g/a:0' \
+        -channel B -fx 'a>0.00001?b/a:0' \
+        "$f"
+    done
 
     # Add background wallpaper
     cp ${wallpaper} $out/share/plymouth/themes/${mytheme}/background.png
