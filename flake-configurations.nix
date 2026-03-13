@@ -95,6 +95,7 @@ in
         ./modules/gnome.nix
         ./modules/kdePlasma.nix # overrides for gnome.nix to use KDE instead
         ./modules/nokia.nix
+        ./modules/plymouth.nix
       ];
       inherit specialArgs;
     };
