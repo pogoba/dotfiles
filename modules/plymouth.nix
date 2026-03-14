@@ -24,6 +24,11 @@
         "$f"
     done
 
+    # Scale spinner images up by 30%
+    for f in $out/share/plymouth/themes/${mytheme}/progress-*.png; do
+      magick "$f" -resize 130% "$f"
+    done
+
     # Add background wallpaper
     cp ${wallpaper} $out/share/plymouth/themes/${mytheme}/background.png
 
@@ -35,6 +40,10 @@ bg_image = Image("background.png");\
 bg_image = bg_image.Scale(screen.w, screen.h);\
 bg_sprite = Sprite(bg_image);\
 bg_sprite.SetPosition(Window.GetX(), Window.GetY(), -100);' \
+      $out/share/plymouth/themes/${mytheme}/${mytheme}.script
+
+    # Hide spinner during password prompt
+    sed -i 's/flyingman_sprite.SetImage(flyingman_image\[Math.Int(progress \/ 2) % 60\]);/if (state.status == "play") { flyingman_sprite.SetOpacity(1); flyingman_sprite.SetImage(flyingman_image[Math.Int(progress \/ 2) % 60]); } else { flyingman_sprite.SetOpacity(0); }/' \
       $out/share/plymouth/themes/${mytheme}/${mytheme}.script
 
     # Update .plymouth to point to the new paths
