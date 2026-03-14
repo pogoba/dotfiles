@@ -71,6 +71,8 @@
     home.file.".config/ksplashrc".text = ''
       [KSplash]
       Theme=org.custom.jochberg.desktop
+      # Theme=None
+      # Engine=none
     '';
 
     # nah doesnt work. Rather just place according files in ~/.config/autostart like gnome-tweaks does

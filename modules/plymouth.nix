@@ -54,6 +54,23 @@ bg_sprite.SetPosition(Window.GetX(), Window.GetY(), -100);' \
   '';
 in {
   config = {
+    # doesnt do anything, but causes reboots after every nixos-rebuild switch
+    # # Keep Plymouth visible until SDDM/KWin takes over the display.
+    # # Prevents black screen gap between Plymouth and desktop.
+    # systemd.services.display-manager = {
+    #   restartIfChanged = false;
+    #   conflicts = [ "plymouth-quit.service" ];
+    #   after = [
+    #     "systemd-user-sessions.service"
+    #     "getty@tty1.service"
+    #     "plymouth-quit.service"
+    #   ];
+    #   serviceConfig = {
+    #     ExecStartPre = "${pkgs.plymouth}/bin/plymouth deactivate";
+    #     ExecStartPost = "${pkgs.plymouth}/bin/plymouth quit --retain-splash";
+    #   };
+    # };
+
     boot = {
       plymouth = {
         enable = true;
