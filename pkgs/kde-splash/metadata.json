@@ -1,0 +1,15 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Peter"
+            }
+        ],
+        "Description": "Jochberg splash screen with custom wallpaper",
+        "Id": "org.custom.jochberg.desktop",
+        "License": "GPLv2+",
+        "Name": "Jochberg"
+    },
+    "X-Plasma-APIVersion": "2"
+}

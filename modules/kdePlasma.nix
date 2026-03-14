@@ -1,5 +1,5 @@
 # This module assumes that the gnome.nix module is also included (because we do a lot of generic desktop stuff in there as well)
-{ config, pkgs, lib, ... }: {
+{ flakepkgs, config, pkgs, lib, ... }: {
   options = {
     myKdePlasma = lib.mkOption {
       type = lib.types.bool;
@@ -29,6 +29,7 @@
       gnome-calculator
       nautilus
       openvpn
+      flakepkgs.kdeSplashScreen
     ];
 
     # Fix for LUKS to unlock keyring with auto login. See https://github.com/NixOS/nixpkgs/pull/282317
