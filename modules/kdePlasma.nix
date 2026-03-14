@@ -11,24 +11,24 @@
   };
 
   config = lib.mkIf (config.myKdePlasma) {
-    nixpkgs.overlays = [
-      (_final: prev: let
-        originalPW = prev.kdePackages.plasma-workspace;
-      in {
-        kdePackages = prev.kdePackages // {
-          plasma-workspace = prev.runCommand "${originalPW.name}-custom-splash" {
-            inherit (originalPW) meta version;
-            passthru = originalPW.passthru or {};
-          } ''
-            cp -a ${originalPW} $out
-            chmod -R u+w $out
-            splashDir=$out/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/splash
-            cp ${../pkgs/kde-splash/Splash.qml} $splashDir/Splash.qml
-            cp ${builtins.path { path = ../users-hm/Jochberg_Nixos_v2.png; name = "background.png"; }} $splashDir/images/background.png
-          '';
-        };
-      })
-    ];
+    # nixpkgs.overlays = [
+    #   (_final: prev: let
+    #     originalPW = prev.kdePackages.plasma-workspace;
+    #   in {
+    #     kdePackages = prev.kdePackages // {
+    #       plasma-workspace = prev.runCommand "${originalPW.name}-custom-splash" {
+    #         inherit (originalPW) meta version;
+    #         passthru = originalPW.passthru or {};
+    #       } ''
+    #         cp -a ${originalPW} $out
+    #         chmod -R u+w $out
+    #         splashDir=$out/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/splash
+    #         cp ${../pkgs/kde-splash/Splash.qml} $splashDir/Splash.qml
+    #         cp ${builtins.path { path = ../users-hm/Jochberg_Nixos_v2.png; name = "background.png"; }} $splashDir/images/background.png
+    #       '';
+    #     };
+    #   })
+    # ];
     services.displayManager.gdm.enable = lib.mkForce false;
     services.desktopManager.gnome.enable = lib.mkForce false;
 
@@ -48,7 +48,7 @@
       gnome-calculator
       nautilus
       openvpn
-      # flakepkgs.kdeSplashScreen # settings from GUI app don't apply consistently, so we just patch the default theme that plasma fall back to
+      flakepkgs.kdeSplashScreen # settings from GUI app don't apply consistently, so we just patch the default theme that plasma fall back to
     ];
 
     # Fix for LUKS to unlock keyring with auto login. See https://github.com/NixOS/nixpkgs/pull/282317

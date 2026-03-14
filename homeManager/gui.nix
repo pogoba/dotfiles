@@ -67,6 +67,12 @@
 
     home.file.".config/ghostty/config".source = ./ghostty.config;
 
+    # KDE splash screen theme (symlink to nix store = KDE can't overwrite it)
+    home.file.".config/ksplashrc".text = ''
+      [KSplash]
+      Theme=org.custom.jochberg.desktop
+    '';
+
     # nah doesnt work. Rather just place according files in ~/.config/autostart like gnome-tweaks does
     # systemd.user.services = {
     #   calendar = {
