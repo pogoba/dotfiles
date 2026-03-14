@@ -1,4 +1,5 @@
 # This module assumes that the gnome.nix module is also included (because we do a lot of generic desktop stuff in there as well)
+# TODO: new plasma which allows for flicker free start should soon hit stable https://github.com/NixOS/nixpkgs/pull/479797
 { flakepkgs, config, pkgs, lib, ... }: {
   options = {
     myKdePlasma = lib.mkOption {
