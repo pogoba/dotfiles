@@ -30,6 +30,7 @@
       build-linux = pkgs.vmTools.runInLinuxVM pkgs.linuxPackages.kernel;
       core-to-core-latency = pkgs.callPackage ./pkgs/core-to-core-latency/default.nix { };
       kdeSplashScreen = pkgs.callPackage ./pkgs/kde-splash { };
+      synatudor-00fd = pkgs.callPackage ./pkgs/synatudor.nix {};
     };
   };
   flake = let

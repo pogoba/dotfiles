@@ -6,6 +6,7 @@
 {
   imports =
     [ (modulesPath + "/installer/scan/not-detected.nix")
+    ../e14-fingerprint.nix
   ];
 
   # workaround for broken h key: capslock is now also h
