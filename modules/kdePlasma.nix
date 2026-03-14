@@ -11,15 +11,20 @@
 
   config = lib.mkIf (config.myKdePlasma) {
     nixpkgs.overlays = [
-      (_final: prev: {
+      (_final: prev: let
+        originalPW = prev.kdePackages.plasma-workspace;
+      in {
         kdePackages = prev.kdePackages // {
-          plasma-workspace = prev.kdePackages.plasma-workspace.overrideAttrs (old: {
-            postInstall = (old.postInstall or "") + ''
-              splashDir=$out/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/splash
-              cp ${../pkgs/kde-splash/Splash.qml} $splashDir/Splash.qml
-              cp ${builtins.path { path = ../users-hm/Jochberg_Nixos_v2.png; name = "background.png"; }} $splashDir/images/background.png
-            '';
-          });
+          plasma-workspace = prev.runCommand "${originalPW.name}-custom-splash" {
+            inherit (originalPW) meta version;
+            passthru = originalPW.passthru or {};
+          } ''
+            cp -a ${originalPW} $out
+            chmod -R u+w $out
+            splashDir=$out/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/splash
+            cp ${../pkgs/kde-splash/Splash.qml} $splashDir/Splash.qml
+            cp ${builtins.path { path = ../users-hm/Jochberg_Nixos_v2.png; name = "background.png"; }} $splashDir/images/background.png
+          '';
         };
       })
     ];
