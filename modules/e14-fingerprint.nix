@@ -15,8 +15,13 @@ in
     services.udev.packages = [ synatudor ];
     services.dbus.packages = [ synatudor ];
 
+    # Start fprintd eagerly so it triggers tudor_host initialization at boot
+    # rather than on first fingerprint use
+    systemd.services.fprintd.wantedBy = [ "multi-user.target" ];
+
     systemd.services.tudor-host-launcher = {
       description = "Tudor host launcher DBus service";
+      after = [ "dbus.service" ];
       serviceConfig = {
         Type = "dbus";
         BusName = "net.reactivated.TudorHostLauncher";
