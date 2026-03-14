@@ -22,10 +22,8 @@ stdenvNoCC.mkDerivation {
     cp ${./defaults} $dir/contents/defaults
     cp ${./Splash.qml} $dir/contents/splash/Splash.qml
 
-    # Copy spinner and logo SVGs from Breeze
+    # Copy spinner SVG from Breeze
     cp ${breezeLaf}/contents/splash/images/busywidget.svgz $dir/contents/splash/images/
-    cp ${breezeLaf}/contents/splash/images/kde.svgz $dir/contents/splash/images/
-    cp ${breezeLaf}/contents/splash/images/plasma.svgz $dir/contents/splash/images/
 
     # Copy wallpaper as background
     cp ${wallpaper} $dir/contents/splash/images/background.png
