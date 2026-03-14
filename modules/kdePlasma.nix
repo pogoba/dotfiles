@@ -10,6 +10,19 @@
   };
 
   config = lib.mkIf (config.myKdePlasma) {
+    nixpkgs.overlays = [
+      (_final: prev: {
+        kdePackages = prev.kdePackages // {
+          plasma-workspace = prev.kdePackages.plasma-workspace.overrideAttrs (old: {
+            postInstall = (old.postInstall or "") + ''
+              splashDir=$out/share/plasma/look-and-feel/org.kde.breeze.desktop/contents/splash
+              cp ${../pkgs/kde-splash/Splash.qml} $splashDir/Splash.qml
+              cp ${builtins.path { path = ../users-hm/Jochberg_Nixos_v2.png; name = "background.png"; }} $splashDir/images/background.png
+            '';
+          });
+        };
+      })
+    ];
     services.displayManager.gdm.enable = lib.mkForce false;
     services.desktopManager.gnome.enable = lib.mkForce false;
 
@@ -29,7 +42,7 @@
       gnome-calculator
       nautilus
       openvpn
-      flakepkgs.kdeSplashScreen
+      # flakepkgs.kdeSplashScreen # settings from GUI app don't apply consistently, so we just patch the default theme that plasma fall back to
     ];
 
     # Fix for LUKS to unlock keyring with auto login. See https://github.com/NixOS/nixpkgs/pull/282317
