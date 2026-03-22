@@ -7,6 +7,7 @@
       nixos-specializations = pkgs.callPackage ./pkgs/nixos-specializations.nix { };
       self-flake = pkgs.callPackage ./pkgs/self-flake.nix { inherit self; impure-debug-info = inputs.impurity; };
       nix-patched = pkgs.callPackage ./pkgs/nix-patched.nix { };
+      openssh-patched = pkgs.callPackage ./pkgs/openssh-patched.nix { };
       wondershaper = pkgs.callPackage ./pkgs/wondershaper.nix { inherit (inputs) wondershaper-src; };
       jack-keyboard = pkgs.callPackage ./pkgs/jack-keyboard.nix { };
       nss-passwords = pkgs.callPackage ./pkgs/nss-passwords.nix { };

@@ -1,0 +1,56 @@
+--- a/clientloop.c
++++ b/clientloop.c
+@@ -156,6 +156,8 @@
+ static time_t x11_refuse_time;	/* If >0, refuse x11 opens after this time. */
+ static time_t server_alive_time;	/* Time to do server_alive_check */
+ static int hostkeys_update_complete;
++static time_t last_input_time;		/* monotime() of last data from server */
++static int stall_hint_printed;		/* print stall hint only once */
+ static int session_setup_complete;
+ 
+ static void client_init_dispatch(struct ssh *ssh);
+@@ -731,6 +733,8 @@
+ 		ptimeout_deadline_sec(&timeout,
+ 		    ssh_packet_get_rekey_timeout(ssh));
+ 	}
++	if (!stall_hint_printed)
++		ptimeout_deadline_sec(&timeout, 10);
+ 
+ 	ret = ppoll(*pfdp, *npfd_activep, ptimeout_get_tsp(&timeout), sigsetp);
+ 
+@@ -799,6 +803,8 @@
+ 	 * the packet subsystem.
+ 	 */
+ 	schedule_server_alive_check();
++	last_input_time = monotime();
++	stall_hint_printed = 0;
+ 	if ((r = ssh_packet_process_read(ssh, connection_in)) == 0)
+ 		return; /* success */
+ 	if (r == SSH_ERR_SYSTEM_ERROR) {
+@@ -1495,6 +1501,8 @@
+ 
+ 	/* Initialize variables. */
+ 	last_was_cr = 1;
++	last_input_time = monotime();
++	stall_hint_printed = 0;
+ 	exit_status = -1;
+ 	connection_in = ssh_packet_get_connection_in(ssh);
+ 	connection_out = ssh_packet_get_connection_out(ssh);
+@@ -1601,6 +1609,17 @@
+ 		if (quit_pending)
+ 			break;
+ 
++		if (!conn_in_ready && !stall_hint_printed &&
++		    monotime() >= last_input_time + 10) {
++			static const char hint[] =
++			    "\r\nNo data received for 10 seconds. "
++			    "Press Enter, then type ~. to disconnect."
++			    "\r\n";
++			stall_hint_printed = 1;
++			(void)atomicio(vwrite, STDERR_FILENO,
++			    hint, sizeof(hint) - 1);
++		}
++
+ 		/* Do channel operations. */
+ 		channel_after_poll(ssh, pfd, npfd_active);
+ 
