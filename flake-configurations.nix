@@ -100,6 +100,17 @@ in
       inherit specialArgs;
     };
 
+    nixosConfigurations.aenderer = nixosSystem {
+      system = "x86_64-linux";
+      modules = extraArgs ++ [
+        ./modules/hardware/hardware-aenderer.nix
+        ./aenderer.nix
+        ./config-common.nix
+        ./modules/gnome.nix
+      ];
+      inherit specialArgs;
+    };
+
     # nixosConfigurations.aendernext = nixosSystem {
     #   system = "x86_64-linux";
     #   modules = extraArgs ++ [
