@@ -6,6 +6,12 @@
     ./jack.nix
   ];
 
+  # disable gnome stuff
+  services.displayManager.gdm.enable = lib.mkDefault false;
+  services.desktopManager.gnome.enable = lib.mkDefault false;
+  services.gnome.gcr-ssh-agent.enable = lib.mkForce false; # no, dear god, no!
+  
+
   environment.sessionVariables = {
     QT_QPA_PLATFORM = "wayland";
     XDG_SESSION_TYPE = "wayland";
