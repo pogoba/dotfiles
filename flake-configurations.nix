@@ -106,7 +106,7 @@ in
         ./modules/hardware/hardware-aenderer.nix
         ./aenderer.nix
         ./config-common.nix
-        ./modules/gnome.nix
+        ./modules/cosmic.nix
       ];
       inherit specialArgs;
     };
