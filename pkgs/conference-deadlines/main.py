@@ -97,10 +97,10 @@ _crawler = Crawler()
 # These override automatic predictions
 PREDICTION_HINTS = {
     # ("SIGCOMM", 2027, ""): "2027-01-30",
-    ("ATC", 2026, "Based on user submitted information"): "2026-06-10"
+    # ("ATC", 2026, "Based on user submitted information"): "2026-06-10"
 }
 
-FROM_YEAR=2020 # crawl since this year
+FROM_YEAR=2025 # crawl since this year
 NOW=2027 # crawl conferences until this year (usually you want NOW to be the next year actually)
 DISPLAY_UNTIL=2026 # display deadlines that are >= this year
 GNATT_FROM=DISPLAY_UNTIL-1
@@ -565,6 +565,7 @@ def fetch_deadlines(name: str, url: str) -> ConferenceEvent:
 
     # Step 3: Extract submission deadline for each cycle
     progress_write(f"  {name}: Extracting submission deadlines...")
+    submission_deadlines = dict()
     for cycle in conference.cycles:
         cycle_prompt = f"Extract the paper submission deadline for the {cycle} cycle" if cycle else "Extract the paper submission deadline"
         sub_output = run_claude(
@@ -575,10 +576,12 @@ def fetch_deadlines(name: str, url: str) -> ConferenceEvent:
         progress_write(f"DEBUG {name} extract subission of cycle {cycle}: {sub_output}")
         sub_deadline = sub_output.get("structured_output")
         if sub_deadline:
-            conference.set_deadline(cycle, Deadline.from_json(sub_deadline, deadline_type=DeadlineType.SUBMISSION))
+            submission_deadlines[cycle] = Deadline.from_json(sub_deadline, deadline_type=DeadlineType.SUBMISSION)
+            conference.set_deadline(cycle, submission_deadlines[cycle])
         else:
             progress_write(f"  {name}: WARNING: {sub_output}")
-            conference.set_deadline(cycle, Deadline.invalid(DeadlineType.SUBMISSION))
+            submission_deadlines[cycle] = Deadline.invalid(DeadlineType.SUBMISSION)
+            conference.set_deadline(cycle, submission_deadlines[cycle])
 
     # Step 4: Extract all deadlines for each cycle
     progress_write(f"  {name}: Extracting all deadlines...")
@@ -929,6 +932,20 @@ def html_gnatt_chart(results: dict[str, ConferenceEvent]) -> str:
         bg = "#f9f9f9" if i % 2 == 0 else "#fff"
         html += f'          <div data-conf="{name}" style="position: absolute; left: 0; top: {y}px; right: 0; height: {row_height}px; background: {bg};"></div>\n'
 
+    # Current month highlight
+    now = datetime.now()
+    month_start = now.replace(day=1)
+    if now.month == 12:
+        month_end = now.replace(year=now.year + 1, month=1, day=1)
+    else:
+        month_end = now.replace(month=now.month + 1, day=1)
+    ms_pct = (month_start - min_dt).days / total_days * 100
+    me_pct = (month_end - min_dt).days / total_days * 100
+    if me_pct > 0 and ms_pct < 100:
+        ms_pct = max(ms_pct, 0)
+        me_pct = min(me_pct, 100)
+        html += f'          <div style="position: absolute; left: {ms_pct:.2f}%; top: 0; width: {me_pct - ms_pct:.2f}%; bottom: 0; background: rgba(231, 76, 60, 0.4); z-index: 0;"></div>\n'
+
     # Bars — multiple segments per row
     for i, (name, segs) in enumerate(conf_rows):
         y = header_height + i * row_height + 4
@@ -1197,8 +1214,27 @@ def render_only():
     write_html_table(results, "/tmp/deadlines.html")
 
 
+def foobar():
+    name = "NDSS"
+    year = 2027
+    fetch_output = run_claude(
+        prompt="search the web for NDSS 2027 deadline",
+        # prompt=f"Search the web for the {name} {year} submission deadline?",
+        # schema=json.dumps(DOCUMENT_CHECK_SCHEMA),
+        allowed_tools="WebSearch,WebFetch",
+    )
+    print(fetch_output)
+    # we could also modify the system prompt "Use the WebSearch tool to answer the users question."
+    # in the end, we don't see the tool uses in the json output though. The web_seach_requests are a lie.
+    # Actually we do see tool use with --verbose.
+    # We still rely on the LLM to reproduce links correctly. So we can just ask for a link or so via json scheme.
+    pass
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "--render":
         render_only()
+    elif len(sys.argv) > 1 and sys.argv[1] == "--foobar":
+        foobar()
     else:
         main()
