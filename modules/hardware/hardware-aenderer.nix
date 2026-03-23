@@ -1,4 +1,4 @@
-{ inputs, modulesPath, ... }:
+{ inputs, modulesPath, flakepkgs, ... }:
 
 {
   imports = [
@@ -15,6 +15,7 @@
   # boot.loader.grub.devices = [ "/dev/disk/by-id/nvme-Micron_MTFDKBA512TGD-2BK15ABLT_253652D5E602" ];
   boot.loader.grub.devices = [ "nodev" ];
   boot.loader.grub.gfxmodeEfi = "1920x1200";
+  boot.loader.grub.theme = flakepkgs.grub-theme;
 
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "usbhid" ];
   boot.initrd.kernelModules = [ ];
