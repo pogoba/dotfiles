@@ -7,9 +7,8 @@
     ./disko-aenderer.nix
   ];
 
-  # Use the systemd-boot EFI boot loader.
-  boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.refind.enable = true;
 
   boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "usbhid" ];
   boot.initrd.kernelModules = [ ];
