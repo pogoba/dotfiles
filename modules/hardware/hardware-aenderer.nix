@@ -1,4 +1,4 @@
-{ inputs, modulesPath, flakepkgs, ... }:
+{ lib, config, inputs, modulesPath, flakepkgs, ... }:
 
 {
   imports = [
@@ -16,11 +16,19 @@
   boot.loader.grub.devices = [ "nodev" ];
   boot.loader.grub.gfxmodeEfi = "1920x1200";
   boot.loader.grub.theme = flakepkgs.grub-theme;
+  boot.loader.grub.gfxpayloadEfi = "keep";
+  boot.loader.grub.splashImage = null;
 
-  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "usbhid" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ ];
+  services.fprintd.enable = true;
+
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "usb_storage" "usbhid" "thunderbolt" ];
+  boot.initrd.kernelModules = [ "dm-snapshot" ];
+  boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
 
   boot.kernel.sysctl = {
     "kernel.sysrq" = 64; # permit term e, kill i, oom-kill f

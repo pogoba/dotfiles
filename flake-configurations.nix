@@ -103,10 +103,12 @@ in
     nixosConfigurations.aenderer = nixosSystem {
       system = "x86_64-linux";
       modules = extraArgs ++ [
+        inputs.nixos-hardware.nixosModules.lenovo-thinkpad-p14s-amd-gen5
         ./modules/hardware/hardware-aenderer.nix
         ./aenderer.nix
         ./config-common.nix
         ./modules/cosmic.nix
+        ./modules/plymouth.nix
       ];
       inherit specialArgs;
     };
