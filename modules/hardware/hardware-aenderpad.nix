@@ -9,13 +9,6 @@
     ../e14-fingerprint.nix
   ];
 
-  # workaround for broken h key: capslock is now also h
-  services.udev.extraHwdb = ''
-    evdev:input:b0011v0001p0001eAB83*
-      KEYBOARD_KEY_3a=h
-  '';
-
-
   # as soon as i upgrade 5.16
   # also: upstream it https://github.com/NixOS/nixos-hardware/pull/438
   #boot = lib.mkIf (lib.versionAtLeast config.boot.kernelPackages.kernel.version "5.17") {
