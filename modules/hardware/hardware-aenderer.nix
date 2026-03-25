@@ -26,6 +26,15 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
+  # swap ctrl and fn keys (see also evtest)
+  # needs sudo udevadm trigger --subsystem-match=input and reboot after nixos switch
+  services.udev.extraHwdb = ''
+    evdev:input:b0011v0001p0001*
+      KEYBOARD_KEY_3a=esc
+  '';
+
+
+
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
