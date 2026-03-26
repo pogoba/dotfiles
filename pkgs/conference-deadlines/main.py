@@ -122,6 +122,14 @@ CONFERENCES = [
     *[("HotNets", y, f"https://conferences.sigcomm.org/hotnets/{y}/cfp.html") for y in range(2005, NOW+1)],
     *[("ATC", y, f"https://www.usenix.org/conference/atc{y % 100:02d}/call-for-papers") for y in range(2013, NOW+1)],
     *[("OSDI", y, f"https://www.usenix.org/conference/osdi{y % 100:02d}/call-for-papers") for y in range(2018, NOW+1)],
+    *[("SnP", y, f"https://www.ieee-security.org/TC/SP{y}/cfpapers.html") for y in range(2015, NOW+1)],
+    *[("Security", y, f"https://www.usenix.org/conference/usenixsecurity{y % 100:02d}/call-for-papers") for y in range(2013, NOW+1)],
+    *[("MLSys", y, f"https://mlsys.org/Conferences/{y}/CallForPapers") for y in range(2020, NOW+1)],
+    *[("SIGMOD", y, f"https://{y}.sigmod.org/calls_papers_sigmod_research.shtml") for y in range(2021, NOW+1)],
+    *[("DSN", y, f"https://dsn{y}.github.io/cfpapers.html") for y in range(2025, NOW+1)],
+
+    # you could also have CCS, IEEE S&P, Usenix Security, then this covers the top systems conference
+    # (some might include MLSys, SIGMOD, or DSN as well)
 
     *[("NINES", 2026, "https://nines-conference.org/cfp")],
     *[("ATC", y, f"https://sigops.org/s/conferences/atc/{y}/cfp.html") for y in range(2026, NOW+1)],
@@ -129,6 +137,10 @@ CONFERENCES = [
     # # conext server often returns randomly broken content. Also claude refuses to evaluate the javascript needed to read the website.
     *[("CoNEXT", y, f"https://conferences2.sigcomm.org/co-next/{y}/#!/cfp") for y in range(2012, NOW+1)],
     *[("SOSP", y, f"https://sigops.org/s/conferences/sosp/{y}/cfp.html") for y in range(2026, NOW+1)],
+
+    # different url pattern every year
+    *[("CCS", 2026, "https://www.sigsac.org/ccs/CCS2026/call-for/call-for-papers.html")],
+
 
     # Note down some urls here:
     # https://www.asplos-conference.org/asplos2026/call-for-papers-asplos27/ asplos often does early cfp announcements on the previous years website. Where exactly is different every time.
