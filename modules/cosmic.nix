@@ -74,6 +74,11 @@
     idevicerestore
     ifuse
     libheif
+
+    gnome-calculator
+    eog # gnome image viewer
+    gnome-system-monitor
+    nautilus
   ];
 
   # for iphone
