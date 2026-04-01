@@ -1410,6 +1410,22 @@
         "type": "github"
       }
     },
+    "nono-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775076302,
+        "narHash": "sha256-HnnxPM9tUeZyduS4mj0A83Y7vDIOa01M6PHNzyCFpVk=",
+        "owner": "pogoba",
+        "repo": "nono",
+        "rev": "f240e6a5426bb88bbeb90691f7efa28e472256df",
+        "type": "github"
+      },
+      "original": {
+        "owner": "pogoba",
+        "repo": "nono",
+        "type": "github"
+      }
+    },
     "nur": {
       "inputs": {
         "flake-parts": "flake-parts_5",
@@ -1530,6 +1546,7 @@
         "nix-top-src": "nix-top-src",
         "nixos-hardware": "nixos-hardware_2",
         "nixpkgs": "nixpkgs_7",
+        "nono-src": "nono-src",
         "nur": "nur",
         "retiolum": "retiolum_2",
         "sops-nix": "sops-nix_2",
