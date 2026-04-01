@@ -81,6 +81,9 @@
 
     llm-agents.url = "github:numtide/llm-agents.nix";
 
+    nono-src.url = "github:pogoba/nono";
+    nono-src.flake = false;
+
     nix-gaming.url = "github:fufexan/nix-gaming";
 
     ghostty.url = "github:ghostty-org/ghostty";

@@ -33,6 +33,7 @@
       kdeSplashScreen = pkgs.callPackage ./pkgs/kde-splash { };
       grub-theme = pkgs.callPackage ./pkgs/grub-theme.nix { };
       synatudor-00fd = pkgs.callPackage ./pkgs/synatudor.nix {};
+      nono = pkgs.callPackage ./pkgs/nono.nix { inherit (inputs) nono-src; };
     };
   };
   flake = let
