@@ -22,5 +22,9 @@ rustPlatform.buildRustPackage rec {
   ];
 
   doCheck = false;
+
+  meta = {
+    mainProgram = "nono";
+  };
 }
 
