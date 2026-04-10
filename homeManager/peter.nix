@@ -48,6 +48,7 @@ in
   imports = [
     "${inputs.sops-nix}/modules/home-manager/sops.nix"
     ./gui.nix
+    ./calendar.nix
     ./noctalia.nix
     ./editors.nix
     # ./neovim # reset by deleting ~/.local/share/nvim/

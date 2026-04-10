@@ -12,6 +12,7 @@
   config = lib.mkIf config.my-noctalia.enable {
     home.file.".config/niri/config.kdl".source = ./niri.kdl;
     home.file.".config/noctalia/plugins/display-config".source = "${inputs.noctalia-plugins-src}/display-config";
+    home.file.".config/noctalia/plugins/khal-next".source = "${inputs.noctalia-plugins-src}/khal-next";
     home.file.".config/noctalia/plugins.json".text = builtins.toJSON {
       version = 2;
       sources = [
@@ -23,6 +24,10 @@
       ];
       states = {
         display-config = {
+          enabled = true;
+          sourceUrl = "";
+        };
+        khal-next = {
           enabled = true;
           sourceUrl = "";
         };
@@ -124,6 +129,9 @@
                 id = "Clock";
                 useMonospacedFont = true;
                 usePrimaryColor = true;
+              }
+              {
+                id = "plugin:khal-next";
               }
               {
                 id = "Notifications";
