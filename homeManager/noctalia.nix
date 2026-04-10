@@ -33,6 +33,12 @@
               {
                 id = "Bluetooth";
               }
+              {
+                id = "DarkMode";
+              }
+              {
+                id = "Brightness";
+              }
             ];
             center = [
               {
@@ -43,7 +49,7 @@
             ];
             right = [
               {
-                alwaysShowPercentage = false;
+                alwaysShowPercentage = true;
                 id = "Battery";
                 warningThreshold = 30;
               }
@@ -57,14 +63,15 @@
             ];
           };
         };
-        colorSchemes.predefinedScheme = "Monochrome";
-        general = {
-          avatarImage = "/home/drfoobar/.face";
-          radiusRatio = 0.2;
-        };
+        colorSchemes.predefinedScheme = "Gruvbox";
+        wallpaper.directory = "${../users-hm}";
+        # general = {
+        #   avatarImage = "/home/drfoobar/.face";
+        #   radiusRatio = 0.2;
+        # };
         location = {
-          monthBeforeDay = true;
-          name = "Marseille, France";
+          monthBeforeDay = false;
+          name = "Munich, France";
         };
       };
       # this may also be a string or a path to a JSON file.

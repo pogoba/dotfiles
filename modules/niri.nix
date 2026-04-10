@@ -105,6 +105,8 @@
     # self.packages.${pkgs.stdenv.hostPlatform.system}.live-text
   ];
 
+  services.upower.enable = true;
+
   programs.kdeconnect.enable = true;
 
   # Needed so xdg-open works properly with Nix-installed apps
