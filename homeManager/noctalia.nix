@@ -10,6 +10,16 @@
   };
 
   config = lib.mkIf config.my-noctalia.enable {
+    # Set the GTK icon theme so Qt's gtk3 platform theme (QT_QPA_PLATFORMTHEME=gtk3)
+    # picks up breeze instead of falling back to hicolor.
+    gtk = {
+      enable = true;
+      iconTheme = {
+        name = "breeze";
+        package = pkgs.kdePackages.breeze-icons;
+      };
+    };
+
     home.file.".config/niri/config.kdl".source = ./niri.kdl;
     home.file.".config/noctalia/plugins/display-config".source = "${inputs.noctalia-plugins-src}/display-config";
     home.file.".config/noctalia/plugins/khal-next".source = "${inputs.noctalia-plugins-src}/khal-next";
