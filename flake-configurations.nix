@@ -107,7 +107,8 @@ in
         ./modules/hardware/hardware-aenderer.nix
         ./aenderer.nix
         ./config-common.nix
-        ./modules/cosmic.nix
+        # ./modules/cosmic.nix
+        ./modules/niri.nix
         ./modules/plymouth.nix
       ];
       inherit specialArgs;
