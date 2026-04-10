@@ -88,6 +88,11 @@
 
     ghostty.url = "github:ghostty-org/ghostty";
 
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     fenix = {
       url = "github:nix-community/fenix";
       # if we follow nixpkgs, nixpkgs updates will trigger a fenixPkgs.rust-analyzer rebuild

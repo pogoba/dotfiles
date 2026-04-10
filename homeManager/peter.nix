@@ -48,10 +48,12 @@ in
   imports = [
     "${inputs.sops-nix}/modules/home-manager/sops.nix"
     ./gui.nix
+    ./noctalia.nix
     ./editors.nix
     # ./neovim # reset by deleting ~/.local/share/nvim/
     ./poba-nvim # reset by deleting ~/.config/poba-nvim ~/.cache/poba-nvim ~/.local/share/poba-nvim ~/.local/state/poba-nvim and re-applying home-manager activation
     inputs.nix-index-database.homeModules.nix-index
+    inputs.noctalia.homeModules.default
   ];
 
   my-gui.enable = my-gui;
