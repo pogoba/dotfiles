@@ -100,8 +100,13 @@
     # configure options
     programs.noctalia-shell = {
       enable = true;
+      # Patch the launcher sort in LauncherCore.qml so open windows always
+      # appear above apps. Upstream sorts by `return sb - sa` (descending
+      # fuzzy-match _score). We prepend a check and higher priority
+      # comparator: wa/wb are 1 for window results (which carry a `windowId`
+      # field from WindowsProvider), 0 otherwise.
       package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
-        postInstall = (old.postInstall or "") + ''
+        postFixup = (old.postFixup or "") + ''
           local f=$out/share/noctalia-shell/Modules/Panels/Launcher/LauncherCore.qml
           chmod +w "$f"
           ${pkgs.python3}/bin/python3 -c "
