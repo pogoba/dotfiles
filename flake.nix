@@ -93,6 +93,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    noctalia-plugins.url = "github:Mic92/noctalia-plugins";
+    noctalia-plugins.inputs.nixpkgs.follows = "nixpkgs";
+
+    noctalia-plugins-src.url = "github:Mic92/noctalia-plugins";
+    noctalia-plugins-src.flake = false;
+
+
     fenix = {
       url = "github:nix-community/fenix";
       # if we follow nixpkgs, nixpkgs updates will trigger a fenixPkgs.rust-analyzer rebuild

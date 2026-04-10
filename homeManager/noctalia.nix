@@ -11,8 +11,26 @@
 
   config = lib.mkIf config.my-noctalia.enable {
     home.file.".config/niri/config.kdl".source = ./niri.kdl;
+    home.file.".config/noctalia/plugins/display-config".source = "${inputs.noctalia-plugins-src}/display-config";
+    home.file.".config/noctalia/plugins.json".text = builtins.toJSON {
+      version = 2;
+      sources = [
+        {
+          enabled = true;
+          name = "Noctalia Plugins";
+          url = "https://github.com/noctalia-dev/noctalia-plugins";
+        }
+      ];
+      states = {
+        display-config = {
+          enabled = true;
+          sourceUrl = "";
+        };
+      };
+    };
 
     home.packages = with pkgs; [
+      jq
       nextcloud-client
       remmina
       keepassxc
@@ -77,6 +95,21 @@
     # configure options
     programs.noctalia-shell = {
       enable = true;
+      package = inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+        postInstall = (old.postInstall or "") + ''
+          local f=$out/share/noctalia-shell/Modules/Panels/Launcher/LauncherCore.qml
+          chmod +w "$f"
+          ${pkgs.python3}/bin/python3 -c "
+          import sys
+          text = open(sys.argv[1]).read()
+          text = text.replace(
+              'return sb - sa;',
+              'const wa = a.windowId !== undefined ? 1 : 0; const wb = b.windowId !== undefined ? 1 : 0; if (wa !== wb) return wb - wa; return sb - sa;'
+          )
+          open(sys.argv[1], 'w').write(text)
+          " "$f"
+        '';
+      });
       settings = {
         # configure noctalia here
         bar = {
@@ -86,8 +119,11 @@
           widgets = {
             left = [
               {
-                id = "ControlCenter";
-                useDistroLogo = true;
+                formatHorizontal = "HH:mm";
+                formatVertical = "HH mm";
+                id = "Clock";
+                useMonospacedFont = true;
+                usePrimaryColor = true;
               }
               {
                 id = "Notifications";
@@ -101,6 +137,10 @@
               }
             ];
             right = [
+              { id = "plugin:display-config"; }
+              {
+                id = "Tray";
+              }
               {
                 id = "Network";
               }
@@ -113,11 +153,8 @@
                 warningThreshold = 30;
               }
               {
-                formatHorizontal = "HH:mm";
-                formatVertical = "HH mm";
-                id = "Clock";
-                useMonospacedFont = true;
-                usePrimaryColor = true;
+                id = "ControlCenter";
+                useDistroLogo = true;
               }
             ];
           };
@@ -133,7 +170,6 @@
             { id = "Notifications"; }
             { id = "NightLight"; }
             { id = "DarkMode"; }
-            { id = "Brightness"; }
           ];
         };
         controlCenter.cards = [

@@ -64,8 +64,7 @@
     # Audio
     pavucontrol
 
-    # Desktop shell (bar, notifications, control center, OSD)
-    inputs.unstablepkgs.legacyPackages.x86_64-linux.noctalia-shell
+    # Desktop shell: installed via Home Manager (programs.noctalia-shell)
     # Qt's wayland QPA leaves QIcon::themeName empty so noctalia falls through
     # to hicolor and can't find generic icons like user-desktop. The gtk3
     # platform theme reads gtk-icon-theme-name; ship breeze so that resolves.
@@ -106,6 +105,7 @@
   ];
 
   services.upower.enable = true;
+  services.power-profiles-daemon.enable = true;
 
   programs.kdeconnect.enable = true;
 
