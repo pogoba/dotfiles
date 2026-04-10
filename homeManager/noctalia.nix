@@ -10,6 +10,8 @@
   };
 
   config = lib.mkIf config.my-noctalia.enable {
+    home.file.".config/niri/config.kdl".source = ./niri.kdl;
+
     # configure options
     programs.noctalia-shell = {
       enable = true;

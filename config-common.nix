@@ -24,6 +24,7 @@
           username = "peter";
           homeDirectory = "/home/peter";
           my-gui = true;
+          my-noctalia = true;
         };
         home-manager.users.peter = import ./homeManager/peter.nix;
       }
