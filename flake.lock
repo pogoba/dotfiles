@@ -1431,6 +1431,42 @@
         "type": "github"
       }
     },
+    "noctalia-plugins": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1775201395,
+        "narHash": "sha256-PI2qvhXxtgdIz8wFq4TgjMfDc620uW7S0oUY1ACrKww=",
+        "owner": "Mic92",
+        "repo": "noctalia-plugins",
+        "rev": "272a73bfe5dda964a02fdcd037ad735f8c40335f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "noctalia-plugins",
+        "type": "github"
+      }
+    },
+    "noctalia-plugins-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775201395,
+        "narHash": "sha256-PI2qvhXxtgdIz8wFq4TgjMfDc620uW7S0oUY1ACrKww=",
+        "owner": "Mic92",
+        "repo": "noctalia-plugins",
+        "rev": "272a73bfe5dda964a02fdcd037ad735f8c40335f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "noctalia-plugins",
+        "type": "github"
+      }
+    },
     "noctalia-qs": {
       "inputs": {
         "nixpkgs": [
@@ -1591,6 +1627,8 @@
         "nixos-hardware": "nixos-hardware_2",
         "nixpkgs": "nixpkgs_7",
         "noctalia": "noctalia",
+        "noctalia-plugins": "noctalia-plugins",
+        "noctalia-plugins-src": "noctalia-plugins-src",
         "nono-src": "nono-src",
         "nur": "nur",
         "retiolum": "retiolum_2",
