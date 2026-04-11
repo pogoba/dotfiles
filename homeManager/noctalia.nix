@@ -20,6 +20,27 @@
       };
     };
 
+    systemd.user.services.keepassxc = {
+      Unit = {
+        Description = "KeePassXC password manager";
+        PartOf = [ "graphical-session.target" ];
+        After = [ "graphical-session.target" ];
+      };
+      Service = {
+        ExecStart = "${pkgs.keepassxc}/bin/keepassxc";
+        Restart = "on-failure";
+      };
+      Install.WantedBy = [ "graphical-session.target" ];
+    };
+
+    # Ensure XDG autostart apps (Nextcloud, etc.) start after KeePassXC
+    # so they can use it as a Secret Service provider.
+    home.file.".config/systemd/user/xdg-desktop-autostart.target.d/after-keepassxc.conf".text = ''
+      [Unit]
+      After=keepassxc.service
+      Wants=keepassxc.service
+    '';
+
     home.file.".config/niri/config.kdl".source = ./niri.kdl;
     home.file.".config/noctalia/plugins/display-config".source = "${inputs.noctalia-plugins-src}/display-config";
     home.file.".config/noctalia/plugins/khal-next".source = "${inputs.noctalia-plugins-src}/khal-next";
@@ -110,6 +131,7 @@
     # configure options
     programs.noctalia-shell = {
       enable = true;
+      systemd.enable = true;
       # Patch the launcher sort in LauncherCore.qml so open windows always
       # appear above apps. Upstream sorts by `return sb - sa` (descending
       # fuzzy-match _score). We prepend a check and higher priority
