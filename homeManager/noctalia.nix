@@ -230,6 +230,10 @@
         #   avatarImage = "/home/drfoobar/.face";
         #   radiusRatio = 0.2;
         # };
+        general.keybinds = {
+          keyUp = [ "Up" "Ctrl+P" ];
+          keyDown = [ "Down" "Ctrl+N" ];
+        };
         location = {
           monthBeforeDay = false;
           name = "Munich, France";
