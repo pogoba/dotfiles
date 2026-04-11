@@ -16,8 +16,8 @@ in
   options.my-noctalia = {
     enable = lib.mkOption {
       type = lib.types.bool;
-      default = true;
-      example = false;
+      default = false;
+      example = true;
       description = "Add home config for noctalia shell for niri";
     };
   };

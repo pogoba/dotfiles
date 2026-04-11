@@ -5,6 +5,7 @@
 , username
 , homeDirectory
 , my-gui
+, my-noctalia ? false
 , inputs
 , flakepkgs
 , ...
@@ -58,6 +59,7 @@ in
   ];
 
   my-gui.enable = my-gui;
+  my-noctalia.enable = my-noctalia;
   programs.nix-index-database.comma.enable = true;
 
   # Configuration of secrets

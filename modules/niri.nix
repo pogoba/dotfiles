@@ -28,6 +28,8 @@
     };
   };
 
+  home-manager.extraSpecialArgs.my-noctalia = true;
+
   programs.niri.enable = true;
 
   # Use KDE Wallet instead of gnome-keyring for secret storage
