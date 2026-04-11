@@ -234,6 +234,8 @@ in
               {
                 id = "ControlCenter";
                 useDistroLogo = true;
+                enableColorization = true;
+                colorizeSystemIcon = "none";
               }
             ];
           };
