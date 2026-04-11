@@ -1,4 +1,17 @@
 { config, lib, pkgs, inputs, ... }:
+let
+  patchPluginSettings = src: settings:
+    if settings == {} then src
+    else pkgs.runCommand "${builtins.baseNameOf src}-patched" {} ''
+      cp -r ${src} $out
+      chmod -R +w $out
+      ${pkgs.jq}/bin/jq ${lib.escapeShellArg (
+        lib.concatStringsSep " | "
+          (lib.mapAttrsToList (k: v: ".metadata.defaultSettings.${k} = ${builtins.toJSON v}") settings)
+      )} $out/manifest.json > $out/manifest.json.tmp
+      mv $out/manifest.json.tmp $out/manifest.json
+    '';
+in
 {
   options.my-noctalia = {
     enable = lib.mkOption {
@@ -42,8 +55,17 @@
     '';
 
     home.file.".config/niri/config.kdl".source = ./niri.kdl;
-    home.file.".config/noctalia/plugins/display-config".source = "${inputs.noctalia-plugins-src}/display-config";
-    home.file.".config/noctalia/plugins/khal-next".source = "${inputs.noctalia-plugins-src}/khal-next";
+    home.file.".config/noctalia/plugins/display-config".source =
+      patchPluginSettings "${inputs.my-noctalia-plugins-src}/display-config" { iconColor = "default"; };
+    home.file.".config/noctalia/plugins/khal-next".source =
+      patchPluginSettings "${inputs.my-noctalia-plugins-src}/khal-next" { iconColor = "default"; };
+    home.file.".config/noctalia/plugins/keybind-cheatsheet".source =
+      "${inputs.noctalia-plugins-src}/keybind-cheatsheet";
+    home.file.".config/noctalia/plugins/slowbongo".source =
+      patchPluginSettings "${inputs.noctalia-plugins-src}/slowbongo" {
+        inputDevices = [ "/dev/input/event1" ];
+        catSize = 1.5;
+      };
     home.file.".config/noctalia/plugins.json".text = builtins.toJSON {
       version = 2;
       sources = [
@@ -59,6 +81,14 @@
           sourceUrl = "";
         };
         khal-next = {
+          enabled = true;
+          sourceUrl = "";
+        };
+        keybind-cheatsheet = {
+          enabled = true;
+          sourceUrl = "";
+        };
+        slowbongo = {
           enabled = true;
           sourceUrl = "";
         };
@@ -126,6 +156,8 @@
       eog # gnome image viewer
       gnome-system-monitor
       nautilus
+
+      evtest # dependency for slowbongo plugin
     ];
 
     # configure options
@@ -183,6 +215,8 @@
             ];
             right = [
               { id = "plugin:display-config"; }
+              { id = "plugin:keybind-cheatsheet"; }
+              { id = "plugin:slowbongo"; }
               {
                 id = "Tray";
               }

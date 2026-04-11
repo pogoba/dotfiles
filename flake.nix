@@ -93,11 +93,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    noctalia-plugins.url = "github:Mic92/noctalia-plugins";
-    noctalia-plugins.inputs.nixpkgs.follows = "nixpkgs";
-
-    noctalia-plugins-src.url = "github:Mic92/noctalia-plugins";
+    noctalia-plugins-src.url = "github:noctalia-dev/noctalia-plugins";
     noctalia-plugins-src.flake = false;
+
+    my-noctalia-plugins-src.url = "github:Mic92/noctalia-plugins";
+    my-noctalia-plugins-src.flake = false;
 
 
     fenix = {
