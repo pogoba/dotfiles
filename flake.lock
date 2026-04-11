@@ -892,6 +892,22 @@
         "type": "github"
       }
     },
+    "my-noctalia-plugins-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775929122,
+        "narHash": "sha256-f1Wxg5D6hy0NkEFNpaO0mksrMH16nwniW03x7RiwrNs=",
+        "owner": "Mic92",
+        "repo": "noctalia-plugins",
+        "rev": "e3866c7baf348e4c890f2403519358332d5e2ccb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "noctalia-plugins",
+        "type": "github"
+      }
+    },
     "n8n-nodes-caldav": {
       "inputs": {
         "flake-parts": [
@@ -1431,38 +1447,18 @@
         "type": "github"
       }
     },
-    "noctalia-plugins": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1775201395,
-        "narHash": "sha256-PI2qvhXxtgdIz8wFq4TgjMfDc620uW7S0oUY1ACrKww=",
-        "owner": "Mic92",
-        "repo": "noctalia-plugins",
-        "rev": "272a73bfe5dda964a02fdcd037ad735f8c40335f",
-        "type": "github"
-      },
-      "original": {
-        "owner": "Mic92",
-        "repo": "noctalia-plugins",
-        "type": "github"
-      }
-    },
     "noctalia-plugins-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1775201395,
-        "narHash": "sha256-PI2qvhXxtgdIz8wFq4TgjMfDc620uW7S0oUY1ACrKww=",
-        "owner": "Mic92",
+        "lastModified": 1775738768,
+        "narHash": "sha256-QgRAarKHK+iKxa3GvUwCm2JiqTQlIW/uH4bQVa5nhaM=",
+        "owner": "noctalia-dev",
         "repo": "noctalia-plugins",
-        "rev": "272a73bfe5dda964a02fdcd037ad735f8c40335f",
+        "rev": "96ac1bf32ef080dac518c625bf1ee800446bf1c0",
         "type": "github"
       },
       "original": {
-        "owner": "Mic92",
+        "owner": "noctalia-dev",
         "repo": "noctalia-plugins",
         "type": "github"
       }
@@ -1621,13 +1617,13 @@
         "llm-agents": "llm-agents",
         "loc-src": "loc-src",
         "mic92-dotfiles": "mic92-dotfiles",
+        "my-noctalia-plugins-src": "my-noctalia-plugins-src",
         "nix-gaming": "nix-gaming",
         "nix-index-database": "nix-index-database_2",
         "nix-top-src": "nix-top-src",
         "nixos-hardware": "nixos-hardware_2",
         "nixpkgs": "nixpkgs_7",
         "noctalia": "noctalia",
-        "noctalia-plugins": "noctalia-plugins",
         "noctalia-plugins-src": "noctalia-plugins-src",
         "nono-src": "nono-src",
         "nur": "nur",
