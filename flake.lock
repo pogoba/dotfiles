@@ -149,6 +149,22 @@
         "url": "https://git.clan.lol/clan/clan-core/archive/main.tar.gz"
       }
     },
+    "claude-history-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775723701,
+        "narHash": "sha256-AAQ3TfplZRCI6hg/pnSmcTtEVHs1Wqd/z8G9nTIbLq0=",
+        "owner": "raine",
+        "repo": "claude-history",
+        "rev": "f0edc8cfc107300ed2e68a3ced722cbb2f7d2c7b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "raine",
+        "repo": "claude-history",
+        "type": "github"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1766194365,
@@ -1605,6 +1621,7 @@
     "root": {
       "inputs": {
         "astro-nvim": "astro-nvim",
+        "claude-history-src": "claude-history-src",
         "ctile": "ctile",
         "discord-tar": "discord-tar",
         "disko": "disko",
