@@ -1,0 +1,45 @@
+{
+  "providers": {
+    "morpheus": {
+      "baseUrl": "https://morpheus.cit.tum.de/api/v1",
+      "api": "openai-completions",
+      "apiKey": "!cat $XDG_RUNTIME_DIR/morpheus_token",
+      "models": [
+        {
+          "id": "mistralai/Ministral-3-14B-Instruct-2512",
+          "name": "Ministral 3 (14B)",
+          "contextWindow": 32768,
+          "input": ["text", "image"]
+        },
+        {
+          "id": "google/gemma-4-31B-it",
+          "name": "Gemma 4 (31B)",
+          "contextWindow": 65536,
+          "input": ["text", "image"]
+        },
+        {
+          "id": "Qwen/Qwen3.5-35B-A3B-FP8",
+          "name": "Qwen 3.5 (35B)",
+          "contextWindow": 65536,
+          "input": ["text", "image"],
+          "reasoning": true,
+          "compat": {
+            "supportsDeveloperRole": false,
+            "reasoningEffortMap": { "minimal": "low", "xhigh": "high" }
+          }
+        },
+        {
+          "id": "qwen-35-35b-coding",
+          "name": "Qwen 3.5 (35B) Coding",
+          "contextWindow": 65536,
+          "input": ["text", "image"],
+          "reasoning": true,
+          "compat": {
+            "supportsDeveloperRole": false,
+            "reasoningEffortMap": { "minimal": "low", "xhigh": "high" }
+          }
+        }
+      ]
+    }
+  }
+}
