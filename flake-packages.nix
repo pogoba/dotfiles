@@ -34,6 +34,7 @@
       grub-theme = pkgs.callPackage ./pkgs/grub-theme.nix { };
       synatudor-00fd = pkgs.callPackage ./pkgs/synatudor.nix {};
       nono = pkgs.callPackage ./pkgs/nono.nix { inherit (inputs) nono-src; };
+      claude-history = pkgs.callPackage ./pkgs/claude-history.nix { inherit (inputs) claude-history-src; };
     };
   };
   flake = let
