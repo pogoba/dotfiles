@@ -28,7 +28,7 @@
     };
   };
 
-  home-manager.extraSpecialArgs.my-noctalia = true;
+  home-manager.extraSpecialArgs = { my-noctalia = true; };
 
   programs.niri.enable = true;
 

@@ -17,7 +17,6 @@
   boot.loader.grub.gfxmodeEfi = "1920x1200";
   boot.loader.grub.gfxpayloadEfi = "keep";
   boot.loader.grub.theme = flakepkgs.grub-theme;
-  boot.loader.grub.gfxpayloadEfi = "keep";
   boot.loader.grub.splashImage = null;
 
   services.fprintd.enable = true;
