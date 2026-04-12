@@ -39,6 +39,9 @@ let
     text = "${pkgs.nmap}/bin/nmap -sP \"$@\"";
   };
 
+  claudeReflectRev = builtins.substring 0 12 inputs.claude-reflect-src.rev;
+  claudeReflectCachePath = ".claude/plugins/cache/claude-reflect-marketplace/claude-reflect/${claudeReflectRev}";
+
   # gc-roots = pkgs.writeScriptBin "dont-collect-these-nix-store-paths" ''
   #   This script is a root node for the nix garbage collector. Hence the following store paths are prevented from being cleaned up.
   #   echo "${config.home-files}" # home-files get collected otherwise. Maybe its NFS?
@@ -183,7 +186,7 @@ in
   home.file.".claude/CLAUDE.md".source = ./user-claude.md;
 
   home.file.".claude/plugins/marketplaces/claude-reflect-marketplace".source = inputs.claude-reflect-src;
-  home.file.".claude/plugins/cache/claude-reflect-marketplace/claude-reflect/${builtins.substring 0 12 inputs.claude-reflect-src.rev}".source = inputs.claude-reflect-src;
+  home.file.${claudeReflectCachePath}.source = inputs.claude-reflect-src;
   home.file.".claude/plugins/known_marketplaces.json".text = builtins.toJSON {
     claude-plugins-official = {
       source = { source = "github"; repo = "anthropics/claude-plugins-official"; };
@@ -198,18 +201,14 @@ in
   };
   home.file.".claude/plugins/installed_plugins.json".text = builtins.toJSON {
     version = 2;
-    plugins = {
-      "claude-reflect@claude-reflect-marketplace" = [
-        {
-          scope = "user";
-          installPath = "${homeDirectory}/.claude/plugins/cache/claude-reflect-marketplace/claude-reflect/${builtins.substring 0 12 inputs.claude-reflect-src.rev}";
-          version = builtins.substring 0 12 inputs.claude-reflect-src.rev;
-          installedAt = "2026-04-12T00:00:00.000Z";
-          lastUpdated = "2026-04-12T00:00:00.000Z";
-          gitCommitSha = inputs.claude-reflect-src.rev;
-        }
-      ];
-    };
+    plugins."claude-reflect@claude-reflect-marketplace" = [{
+      scope = "user";
+      installPath = "${homeDirectory}/${claudeReflectCachePath}";
+      version = claudeReflectRev;
+      installedAt = "2026-04-12T00:00:00.000Z";
+      lastUpdated = "2026-04-12T00:00:00.000Z";
+      gitCommitSha = inputs.claude-reflect-src.rev;
+    }];
   };
 
   home.packages = with pkgs; [
