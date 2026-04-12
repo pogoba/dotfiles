@@ -200,6 +200,7 @@ in
     man-pages
     inputs.hosthog.packages.${stdenv.hostPlatform.system}.default
     inputs.llm-agents.packages.${stdenv.hostPlatform.system}.claude-code
+    inputs.llm-agents.packages.${stdenv.hostPlatform.system}.workmux
     flakepkgs.claude-history
     flakepkgs.nono
     # claude-code
