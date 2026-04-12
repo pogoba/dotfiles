@@ -15,6 +15,7 @@
   # boot.loader.grub.devices = [ "/dev/disk/by-id/nvme-Micron_MTFDKBA512TGD-2BK15ABLT_253652D5E602" ];
   boot.loader.grub.devices = [ "nodev" ];
   boot.loader.grub.gfxmodeEfi = "1920x1200";
+  boot.loader.grub.gfxpayloadEfi = "keep";
   boot.loader.grub.theme = flakepkgs.grub-theme;
   boot.loader.grub.gfxpayloadEfi = "keep";
   boot.loader.grub.splashImage = null;

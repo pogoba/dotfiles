@@ -89,6 +89,7 @@ in {
       consoleLogLevel = 3;
       initrd.verbose = false;
       initrd.systemd.enable = lib.mkForce true;
+      initrd.kernelModules = [ "amdgpu" ]; # hopefully this maintains proper alignment when booting with multiple monitors
     };
   };
 }

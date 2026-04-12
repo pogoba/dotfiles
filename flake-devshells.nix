@@ -12,6 +12,7 @@
             dnspython
             tqdm
             selenium
+            requests
           ]))
         ];
       };
