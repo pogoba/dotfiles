@@ -1,0 +1,77 @@
+From a3c6e7d303cd8368e8d4e35be7cbc1997e801257 Mon Sep 17 00:00:00 2001
+From: Rodrigo Arias Mallo <rodrigo.arias@bsc.es>
+Date: Mon, 21 Jul 2025 17:38:58 +0200
+Subject: [PATCH] Misc fixes to build with gcc 14
+
+---
+ src/bench.h      | 2 ++
+ src/lat_select.c | 2 +-
+ src/lib_debug.c  | 1 +
+ src/lib_sched.c  | 2 +-
+ src/lib_timing.c | 2 +-
+ 5 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/src/bench.h b/src/bench.h
+index 8166408..4da9079 100644
+--- a/src/bench.h
++++ b/src/bench.h
+@@ -320,4 +320,6 @@ extern int handle_scheduler(int childno, int benchproc, int nbenchprocs);
+ extern char *rpc_xact_1();
+ extern char *client_rpc_xact_1();
+
++void lmbench_usage(int argc, char *argv[], char* usage);
++
+ #endif /* _BENCH_H */
+diff --git a/src/lat_select.c b/src/lat_select.c
+index 583b505..39df369 100644
+--- a/src/lat_select.c
++++ b/src/lat_select.c
+@@ -164,7 +164,7 @@ doit(iter_t iterations, void * cookie)
+ 	state_t * 	state = (state_t *)cookie;
+ 	fd_set		nosave;
+ 	static struct timeval tv;
+-	static count = 0;
++	static int count = 0;
+ 	
+ 	tv.tv_sec = 0;
+ 	tv.tv_usec = 0;
+diff --git a/src/lib_debug.c b/src/lib_debug.c
+index e8347dd..cf65312 100644
+--- a/src/lib_debug.c
++++ b/src/lib_debug.c
+@@ -1,5 +1,6 @@
+ #include "bench.h"
+ #include "lib_debug.h"
++#include <math.h>
+
+ /*
+  * return micro-seconds / iteration at the the fraction point.
+diff --git a/src/lib_sched.c b/src/lib_sched.c
+index aa83ae0..4f16bbf 100644
+--- a/src/lib_sched.c
++++ b/src/lib_sched.c
+@@ -91,7 +91,7 @@ handle_scheduler(int childno, int benchproc, int nbenchprocs)
+ 			     childno * (nbenchprocs + 1) + benchproc);
+ 	} else {
+ 		/* default action: do nothing */
+-		return;
++		return 0;
+ 	}
+
+ 	return sched_pin(cpu % sched_ncpus());
+diff --git a/src/lib_timing.c b/src/lib_timing.c
+index af8cf68..7ec9652 100644
+--- a/src/lib_timing.c
++++ b/src/lib_timing.c
+@@ -1623,7 +1623,7 @@ bread(void* buf, long nbytes)
+ void
+ touch(char *buf, int nbytes)
+ {
+-	static	psize;
++	static int psize;
+
+ 	if (!psize) {
+ 		psize = getpagesize();
+--
+2.49.0
+
