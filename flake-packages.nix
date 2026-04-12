@@ -35,6 +35,7 @@
       synatudor-00fd = pkgs.callPackage ./pkgs/synatudor.nix {};
       nono = pkgs.callPackage ./pkgs/nono.nix { inherit (inputs) nono-src; };
       claude-history = pkgs.callPackage ./pkgs/claude-history.nix { inherit (inputs) claude-history-src; };
+      lmbench = pkgs.callPackage ./pkgs/lmbench { };
     };
   };
   flake = let
