@@ -203,6 +203,22 @@
         "type": "github"
       }
     },
+    "claude-reflect-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1773690068,
+        "narHash": "sha256-SDvOHgOQJsaDdjwrvuFS4MwPn/UfFNDK4bE/X03Zld4=",
+        "owner": "bayramannakov",
+        "repo": "claude-reflect",
+        "rev": "8dc9db43c9bfaa53b567d63f3f48385bcf3d3084",
+        "type": "github"
+      },
+      "original": {
+        "owner": "bayramannakov",
+        "repo": "claude-reflect",
+        "type": "github"
+      }
+    },
     "crane": {
       "locked": {
         "lastModified": 1766194365,
@@ -1274,11 +1290,11 @@
     "nix-top-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1705778081,
-        "narHash": "sha256-sg5uKjmvHST3u8CAPhkPwk4kuhVsTaszgQeO7KQsJHo=",
+        "lastModified": 1776006620,
+        "narHash": "sha256-q0Xne10FuVEliCOcSX6s8ltouU08lxXCI37vMYuID9E=",
         "owner": "pogobanane",
         "repo": "nix-top",
-        "rev": "5ef9a4510c601c93d294b1cc294d61c74096250a",
+        "rev": "2664afef0d80d0f25e3419e038b256da55251941",
         "type": "github"
       },
       "original": {
@@ -1699,6 +1715,7 @@
       "inputs": {
         "astro-nvim": "astro-nvim",
         "claude-history-src": "claude-history-src",
+        "claude-reflect-src": "claude-reflect-src",
         "ctile": "ctile",
         "discord-tar": "discord-tar",
         "disko": "disko",
