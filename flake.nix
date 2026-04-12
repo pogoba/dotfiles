@@ -87,6 +87,9 @@
     claude-history-src.url = "github:raine/claude-history";
     claude-history-src.flake = false;
 
+    claude-reflect-src.url = "github:bayramannakov/claude-reflect";
+    claude-reflect-src.flake = false;
+
     nix-gaming.url = "github:fufexan/nix-gaming";
 
     ghostty.url = "github:ghostty-org/ghostty";
