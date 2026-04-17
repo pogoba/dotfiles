@@ -277,7 +277,7 @@ in
         };
         location = {
           monthBeforeDay = false;
-          name = "Munich, France";
+          name = "Munich, Germany";
         };
       };
       # this may also be a string or a path to a JSON file.

@@ -121,6 +121,19 @@ in
   #  };
   #};
 
+  # Lock the screen before suspend (e.g. lid close)
+  systemd.user.services.lock-screen-on-suspend = {
+    Unit = {
+      Description = "Lock screen before suspend";
+      Before = [ "sleep.target" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia-shell ipc call lockScreen lock";
+    };
+    Install.WantedBy = [ "sleep.target" ];
+  };
+
   programs.direnv.enable = true;
   programs.direnv.nix-direnv.enable = true;
 
