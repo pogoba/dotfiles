@@ -13,6 +13,8 @@ let
     '';
 in
 {
+  imports = [ ./wluma.nix ];
+
   options.my-noctalia = {
     enable = lib.mkOption {
       type = lib.types.bool;
@@ -23,6 +25,8 @@ in
   };
 
   config = lib.mkIf config.my-noctalia.enable {
+    my-wluma.enable = true;
+
     # Set the GTK icon theme so Qt's gtk3 platform theme (QT_QPA_PLATFORMTHEME=gtk3)
     # picks up breeze instead of falling back to hicolor.
     gtk = {
