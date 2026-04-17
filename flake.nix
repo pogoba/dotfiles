@@ -99,7 +99,8 @@
     noctalia-plugins-src.url = "github:noctalia-dev/noctalia-plugins";
     noctalia-plugins-src.flake = false;
 
-    my-noctalia-plugins-src.url = "github:Mic92/noctalia-plugins";
+    # my-noctalia-plugins-src.url = "path:/home/peter/dev/github/noctalia-plugins"; # "github:Mic92/noctalia-plugins";
+    my-noctalia-plugins-src.url = "github:pogoba/noctalia-plugins";
     my-noctalia-plugins-src.flake = false;
 
 

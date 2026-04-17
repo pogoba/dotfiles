@@ -37,6 +37,16 @@ in
       };
     };
 
+    systemd.user.services.noctalia-shell.Service.Environment = [ "QML_DISABLE_DISK_CACHE=1" ]; # qt caches doesnt notice changes in plugins when they live in the nix store. This fixes it.
+
+    # kanshi driven by ~/.config/kanshi/config, which the noctalia display-config
+    # plugin writes via "Remember monitors". Don't manage profiles here so the
+    # plugin stays authoritative.
+    services.kanshi = {
+      enable = true;
+      systemdTarget = "graphical-session.target";
+    };
+
     systemd.user.services.keepassxc = {
       Unit = {
         Description = "KeePassXC password manager";
