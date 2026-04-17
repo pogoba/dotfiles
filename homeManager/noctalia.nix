@@ -156,6 +156,7 @@ in
       eog # gnome image viewer
       gnome-system-monitor
       nautilus
+      adwaita-icon-theme
 
       evtest # dependency for slowbongo plugin
     ];
