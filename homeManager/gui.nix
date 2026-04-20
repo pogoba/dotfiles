@@ -66,6 +66,7 @@
     home.file.".config/alacritty/alacritty.toml".source = ./alacritty.toml;
 
     home.file.".config/ghostty/config".source = ./ghostty.config;
+    home.file.".config/ghostty/my-shader.glsl".source = ./ghostty-glitches.glsl;
 
     # KDE splash screen theme (symlink to nix store = KDE can't overwrite it)
     home.file.".config/ksplashrc".text = ''
