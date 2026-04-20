@@ -5,12 +5,14 @@
 #define BAR_THICKNESS .999
 // bar pointiness: 1. = original flat-topped slab, higher = sharper peak with faster shoulder drop-off
 #define BAR_POINTINESS 3.
-// vertical scroll speed of the bars (also controls how often a bar passes a given point)
+// vertical scroll speed of the primary bar during its sweep
 #define BAR_SPEED 1.6
-// second bar's speed — keeps a 1.6:1 ratio with BAR_SPEED to preserve the drifting beat
-#define BAR_SPEED_2 .1
+// secondary bar's speed — different from BAR_SPEED so the two sweeps drift out of sync
+#define BAR_SPEED_2 1.
 // bar frequency: higher = more bars visible on screen at once
 #define BAR_DENSITY 2.
+// break multiplier: 1. = always-on (original cadence), 10. → bar appears only 1 in every 10 natural periods
+#define BREAK_MULTIPLIER 100.
 // halo spread around the bar: lower = much wider taper. 0. covers ~the whole screen when the bar is centered
 #define HALO_THICKNESS 0.
 
@@ -39,19 +41,27 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec2 uv = fragCoord / iResolution.xy;
     float t = iTime;
 
-    // two bars scrolling at different speeds, kicking the image in opposite directions
+    // two bars scrolling at their full speeds, continuous like the original
     float s1 = sin((uv.y + t * BAR_SPEED) * BAR_DENSITY);
     float s2 = sin((uv.y + t * BAR_SPEED_2) * BAR_DENSITY);
-    float bar1 = pow(smoothstep(BAR_THICKNESS, 1., s1), BAR_POINTINESS);
-    float bar2 = pow(smoothstep(BAR_THICKNESS, 1., s2), BAR_POINTINESS);
+
+    // each bar is active for one natural period out of every BREAK_MULTIPLIER.
+    // at BREAK_MULTIPLIER=1 the gate is always open (matches the original exactly).
+    float period1 = 6.2831853 / (BAR_SPEED   * BAR_DENSITY);
+    float period2 = 6.2831853 / (BAR_SPEED_2 * BAR_DENSITY);
+    float active1 = step(mod(t, period1 * BREAK_MULTIPLIER), period1);
+    float active2 = step(mod(t, period2 * BREAK_MULTIPLIER), period2);
+
+    float bar1 = pow(smoothstep(BAR_THICKNESS, 1., s1), BAR_POINTINESS) * active1;
+    float bar2 = pow(smoothstep(BAR_THICKNESS, 1., s2), BAR_POINTINESS) * active2;
     float distortion = (bar1 - bar2) * BAR_DISPLACE;
 
     // thin core — for the hard pixel-shift and scanline flash
     float barIntensity = max(bar1, bar2);
 
-    // wide halo that travels with the bar, tapering out above and below
-    float haloIntensity = max(smoothstep(HALO_THICKNESS, 1., s1),
-                              smoothstep(HALO_THICKNESS, 1., s2));
+    // wide halo that travels with the bar, tapering out above and below (also gated)
+    float haloIntensity = max(smoothstep(HALO_THICKNESS, 1., s1) * active1,
+                              smoothstep(HALO_THICKNESS, 1., s2) * active2);
 
     // chromatic aberration, tapered by the halo around the bar
     vec2 st = uv + vec2(distortion, 0.);
