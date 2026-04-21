@@ -36,7 +36,9 @@
       nono = pkgs.callPackage ./pkgs/nono.nix { inherit (inputs) nono-src; };
       claude-history = pkgs.callPackage ./pkgs/claude-history.nix { inherit (inputs) claude-history-src; };
       lmbench = pkgs.callPackage ./pkgs/lmbench { };
-      weather-report = pkgs.callPackage ./pkgs/weather-report.nix { };
+      weather-report = pkgs.callPackage ./pkgs/weather-report.nix {
+        pi = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.pi;
+      };
     };
   };
   flake = let
