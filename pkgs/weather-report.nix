@@ -30,7 +30,7 @@ pkgs.writeShellApplication {
       })' "''${HISTORY_FILES[@]}")
     fi
 
-    PROMPT="I cycle to and from work. Write a concise report (2-3 sentences) focused on how cold it will feel on the bike for the morning commute (~09:00) and evening commute (~18:00). Prioritize: feels-like/wind-chill temperature, precipitation. Call out if I need my scarf to pull over my nose, rain gear, or gloves. If recent history is provided and today's commute conditions are notably different from the recent trend, briefly mention it. Only output the report text, no preamble. Today wttr.in JSON: $WEATHER"
+    PROMPT="I cycle to and from work (morning ~09:00, evening ~18:00). Give me a short heads-up (1-2 sentences) about today's commute weather. Focus on what's NOTABLE compared to the recent trend to help me avoid getting sick due to cold weather or sweat too much because of excess clothing: a meaningful drop or rise in how cold it feels, first rain in a while, unusual wind, unexpected warmth, etc. Avoid reciting numbers. Translate into concrete gear advice when relevant (scarf over nose, gloves, rain gear, extra layer). If today is unremarkable given the trend, say so in one short sentence. Only output the report text, no preamble. Today wttr.in JSON: $WEATHER"
     if [[ -n "$HISTORY_JSON" ]]; then
       PROMPT="$PROMPT Recent history (past 14 days, daily min/max C and commute-time feels-like/wind/rain): $HISTORY_JSON"
     fi
