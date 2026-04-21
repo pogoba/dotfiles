@@ -6,6 +6,8 @@ pkgs.writeShellApplication {
   text = ''
     set -euo pipefail
 
+    run_report() {
+
     DATA_DIR="''${XDG_DATA_HOME:-$HOME/.local/share}/weather-report"
     mkdir -p "$DATA_DIR"
 
@@ -47,5 +49,55 @@ pkgs.writeShellApplication {
     URL="https://api.telegram.org/bot$TOKEN/sendMessage"
 
     [[ $(curl -fsS -X POST "$URL" --data-urlencode "chat_id=$CHAT_ID" --data-urlencode "text=$REPORT" | jq .ok) = "true" ]]
+
+    }
+
+    usage() {
+      cat <<EOF
+    Usage: weather-report [--loop] [-h|--help]
+
+    Fetches today's weather from wttr.in, generates a short cycling-commute
+    heads-up via the pi LLM agent, and sends it to Telegram.
+
+    History: each run saves the raw wttr.in JSON to
+      \$XDG_DATA_HOME/weather-report/YYYY-MM-DD.json
+    The past 14 days of saved files are summarised and included as context
+    so the report can flag changes from the recent trend.
+
+    Options:
+      --loop       Run forever, firing one report every day at 08:00 local time.
+      -h, --help   Show this message and exit.
+
+    Requires:
+      \$XDG_RUNTIME_DIR/telegram_bot_token   Telegram bot API token
+    EOF
+    }
+
+    case "''${1:-}" in
+      -h|--help)
+        usage
+        exit 0
+        ;;
+      --loop)
+        while true; do
+          now=$(date +%s)
+          target=$(date -d 'today 08:00' +%s)
+          if (( target <= now )); then
+            target=$(date -d 'tomorrow 08:00' +%s)
+          fi
+          echo "weather-report: sleeping until $(date -d "@$target") ($((target - now))s)" >&2
+          sleep $((target - now))
+          run_report || echo "weather-report: run failed ($?)" >&2
+        done
+        ;;
+      "")
+        run_report
+        ;;
+      *)
+        echo "weather-report: unknown argument: $1" >&2
+        usage >&2
+        exit 2
+        ;;
+    esac
   '';
 }
