@@ -1,0 +1,21 @@
+{
+  "extends": "claude-code",
+  "meta": {
+    "name": "nix-claude"
+  },
+  "security": {
+    "groups": []
+  },
+  "workdir": {
+    "access": "readwrite"
+  },
+  "filesystem": {
+    "allow": [ "/home/peter/.cache", "/tmp", "/run/sudo" ],
+    "allow_file": [ "/dev/ptmx" ],
+    "read": [ "/nix/store", "/home/peter/dev", "/home/peter/.local/share/nix", "/sys", "/proc", "/run/nscd","/etc/pam.d" ],
+    "read_file": [ "/run/wrappers/bin/sudo", "/run/wrappers/bin/su", "/run/wrappers/bin/unix_chkpwd", "/etc/sudoers",  "/etc/shadow" ]
+  },
+  "policy": {
+    "override_deny": [ "/nix/store" ]
+  }
+}

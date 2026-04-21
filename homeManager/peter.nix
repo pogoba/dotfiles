@@ -179,6 +179,7 @@ in
 
   home.file.".tmate.conf".source = ./tmate.conf;
   home.file.".config/lazygit/config.yml".source = ./lazygit.yml;
+  home.file.".config/nono/profiles/nix-claude.json".source = ./nono-nix-claude.json;
   home.file.".claude/CLAUDE.md".source = ./user-claude.md;
 
   home.packages = with pkgs; [
