@@ -6,7 +6,7 @@
 {
   imports =
     [ (modulesPath + "/installer/scan/not-detected.nix")
-    ../e14-fingerprint.nix
+    # ../e14-fingerprint.nix # the fingerprint reader sucks
   ];
 
   # as soon as i upgrade 5.16
