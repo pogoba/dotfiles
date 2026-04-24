@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "academic-research-skills-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1776319163,
+        "narHash": "sha256-1HUmbI1WYPHeYUcvtrPNGve0jiDrK2IcFM6JdUx3dCQ=",
+        "owner": "Imbad0202",
+        "repo": "academic-research-skills",
+        "rev": "9385dff0022f1ad43ae806b0da2ec897feaffd95",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Imbad0202",
+        "repo": "academic-research-skills",
+        "type": "github"
+      }
+    },
     "astro-nvim": {
       "flake": false,
       "locked": {
@@ -1713,6 +1729,7 @@
     },
     "root": {
       "inputs": {
+        "academic-research-skills-src": "academic-research-skills-src",
         "astro-nvim": "astro-nvim",
         "claude-history-src": "claude-history-src",
         "claude-reflect-src": "claude-reflect-src",
