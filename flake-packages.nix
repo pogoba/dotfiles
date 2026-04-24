@@ -39,6 +39,9 @@
       weather-report = pkgs.callPackage ./pkgs/weather-report.nix {
         pi = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.pi;
       };
+      extrasuite = pkgs.callPackage ./pkgs/extrasuite.nix {
+        inherit (inputs) pyproject-nix uv2nix pyproject-build-systems extrasuite-src;
+      };
     };
   };
   flake = let
