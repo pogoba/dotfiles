@@ -37,6 +37,19 @@ in
       };
     };
 
+    # Lock the screen before suspend (e.g. lid close)
+    systemd.user.services.lock-screen-on-suspend = {
+      Unit = {
+        Description = "Lock screen before suspend";
+        Before = [ "sleep.target" ];
+      };
+      Service = {
+        Type = "oneshot";
+        ExecStart = "${inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/noctalia-shell ipc call lockScreen lock";
+      };
+      Install.WantedBy = [ "sleep.target" ];
+    };
+
     systemd.user.services.noctalia-shell.Service.Environment = [ "QML_DISABLE_DISK_CACHE=1" ]; # qt caches doesnt notice changes in plugins when they live in the nix store. This fixes it.
 
     # kanshi driven by ~/.config/kanshi/config, which the noctalia display-config
