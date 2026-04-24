@@ -120,7 +120,7 @@ CONFERENCES = [
     *[("APSys", y, f"https://apsys{y}.github.io/call_for_papers.html") for y in [2025]],
     # APSys needs new links
     *[("HotNets", y, f"https://conferences.sigcomm.org/hotnets/{y}/cfp.html") for y in range(2005, NOW+1)],
-    *[("ATC", y, f"https://www.usenix.org/conference/atc{y % 100:02d}/call-for-papers") for y in range(2013, NOW+1)],
+    *[("ATC", y, f"https://www.usenix.org/conference/atc{y % 100:02d}/call-for-papers") for y in range(2013, 2026)],
     *[("OSDI", y, f"https://www.usenix.org/conference/osdi{y % 100:02d}/call-for-papers") for y in range(2018, NOW+1)],
     *[("SnP", y, f"https://www.ieee-security.org/TC/SP{y}/cfpapers.html") for y in range(2015, NOW+1)],
     *[("Security", y, f"https://www.usenix.org/conference/usenixsecurity{y % 100:02d}/call-for-papers") for y in range(2013, NOW+1)],
