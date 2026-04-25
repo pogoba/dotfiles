@@ -132,7 +132,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     extrasuite-src = {
-      url = "path:/home/peter/dev/github/extrasuite";
+      # url = "path:/home/peter/dev/github/extrasuite";
+      url = "github:think41/extrasuite";
       flake = false;
     };
     googleworkspace-cli.url = "github:googleworkspace/cli";

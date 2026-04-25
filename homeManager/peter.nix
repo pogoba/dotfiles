@@ -255,7 +255,7 @@ in
       runtimeInputs = [ pkgs.bubblewrap ];
       text = builtins.readFile ../nonowrap;
     })
-    bwrap # bubblewrap, nice to have
+    bubblewrap # nice to have
 
     # claude-code
     codex
