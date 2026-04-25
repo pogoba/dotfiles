@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+set -e
+
+if [[ $# -eq 0 ]]; then
+  TARGET_CMD=$SHELL
+else
+  TARGET_CMD=("$@")
+fi
+
+# declare that we are in a special shell, so that the user sees shell prompts like:
+# nonowrap.sh:peter@aenderpad>
+PROMPT_NAME=$(basename "$0")
+export name=$PROMPT_NAME
+
+DATE=$(date --iso-8601=seconds)
+PREFIX=/tmp/bwrap-$DATE
+UPPER=$PREFIX/overlayfs-upper
+WORK=$PREFIX/overlayfs-work
+ENV=$PREFIX/env
+mkdir -p "$UPPER"
+mkdir -p "$WORK"
+echo "# This is the environemnt that runs with the $UPPER overlayfs." > "$ENV"
+export -p >> "$ENV"
+
+echo "$ENV"
+
+# sudo setpriv --reuid=peter --regid=users --init-groups --inh-caps=-all -- bash --rcfile $ENV -c "$@"
+
+# sudo mkdir -p /alt-root
+# sudo mount --bind / /alt-root
+# 1. create overlayfs with bwrap
+# 2. inject envfile as envvar
+# 3. undo sudo
+# 4. use bash to restore env for target process (bash will start non-interactively and hence populate env from BASH_ENV)
+# 5. replace bash with target process (exec), preserving argument separation
+sudo bwrap \
+  --overlay-src / \
+  --overlay "$UPPER" "$WORK" / \
+  --ro-bind /run/current-system /run/current-system \
+  --proc /proc \
+  --dev /dev \
+  --setenv BASH_ENV "$ENV" \
+  -- \
+  setpriv \
+  --reuid=peter \
+  --regid=users \
+  --init-groups \
+  --inh-caps=-all \
+  -- \
+  bash -c 'exec "$@"' _ "${TARGET_CMD[@]}"

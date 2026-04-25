@@ -5,7 +5,7 @@
 #[ -z "$SSH_CONNECTION" ] && ZSH_TMUX_AUTOSTART="true"
 # [ -z $TMUX ] && ZSH_TMUX_AUTOSTART="true"
 # vim starts terminals as xterm even if running in tmux
-[[ ! $TERM = *screen* ]] && [ ! $TERM = 'xterm' ] && tmux at || tmux new -t default
+[ -z $TMUX ] && { [[ ! $TERM = *screen* ]] && [ ! $TERM = 'xterm' ] && tmux at || tmux new -t default; }
 
 # ssh_auth_sock_static=/tmp/ssh-static-ccnoiewa
 # echo "ssh-auth-sock was $SSH_AUTH_SOCK"

@@ -250,6 +250,12 @@ in
     flakepkgs.extrasuite # llm firendly google docs cli
     flakepkgs.claude-history
     flakepkgs.nono
+    (pkgs.writeShellApplication {
+      name = "nonowrap";
+      runtimeInputs = [ pkgs.bubblewrap ];
+      text = builtins.readFile ../nonowrap;
+    })
+
     # claude-code
     codex
     gemini-cli
