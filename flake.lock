@@ -386,14 +386,17 @@
     "extrasuite-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1777043566,
-        "narHash": "sha256-HXaUDQBs/4fnL2OLjONNpG6bLkCcrCyxYjom9C+CsLI=",
-        "path": "/home/peter/dev/github/extrasuite",
-        "type": "path"
+        "lastModified": 1776403913,
+        "narHash": "sha256-XaeJjDS01BoBuzviHvaq8wM7a5X4YOnm89O6pSDoOMc=",
+        "owner": "think41",
+        "repo": "extrasuite",
+        "rev": "ded6772adbc1db10f04fbc5d95620f591e9aa66d",
+        "type": "github"
       },
       "original": {
-        "path": "/home/peter/dev/github/extrasuite",
-        "type": "path"
+        "owner": "think41",
+        "repo": "extrasuite",
+        "type": "github"
       }
     },
     "fenix": {
