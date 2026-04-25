@@ -24,6 +24,19 @@ let
     });
   };
 
+  # Add drive.readonly so `docs pull` can read comments on files not created by
+  # this OAuth app (drive.file alone only sees app-created files).
+  scopePatchOverlay = _final: prev: {
+    extrasuite = prev.extrasuite.overrideAttrs (old: {
+      postPatch = (old.postPatch or "") + ''
+        substituteInPlace src/extrasuite/client/credentials.py \
+          --replace-fail \
+            '"https://www.googleapis.com/auth/drive.file",' \
+            '"https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive.readonly",'
+      '';
+    });
+  };
+
   pythonSet =
     (callPackage pyproject-nix.build.packages {
       python = python3;
@@ -32,6 +45,7 @@ let
         pyproject-build-systems.overlays.wheel
         overlay
         buildSystemOverlay
+        scopePatchOverlay
       ]);
 
   inherit (callPackage pyproject-nix.build.util { }) mkApplication;

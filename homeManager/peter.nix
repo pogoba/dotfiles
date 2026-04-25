@@ -173,6 +173,18 @@ in
   home.file.".config/nono/profiles/nix-claude.json".source = ./nono-nix-claude.json;
   home.file.".claude/CLAUDE.md".source = ./user-claude.md;
   home.file.".claude/skills/academic-paper-reviewer".source = "${inputs.academic-research-skills-src}/academic-paper-reviewer";
+  home.file.".claude/skills/extrasuite".source = pkgs.runCommandLocal "extrasuite-skill" { } ''
+    cp -r ${inputs.extrasuite-src}/server/skills/extrasuite $out
+    chmod -R +w $out
+    # we dont use the uvx package manager around here
+    substituteInPlace $out/SKILL.md \
+      --replace-quiet 'uvx extrasuite@latest' 'extrasuite' \
+      --replace-quiet 'uvx extrasuite' 'extrasuite' \
+      --replace-quiet 'The `extrasuite` command is available via `uvx`. Discover commands using `--help`.' \
+                      'The `extrasuite` command is already on PATH. Discover commands using `--help`.' \
+      --replace-quiet '# Module overview. Skip @latest for subsequent commands' \
+                      '# Module overview'
+  '';
 
   home.file.".claude/plugins/marketplaces/claude-reflect-marketplace".source = inputs.claude-reflect-src;
   home.file.${claudeReflectCachePath}.source = inputs.claude-reflect-src;
