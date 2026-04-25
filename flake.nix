@@ -135,6 +135,8 @@
       url = "path:/home/peter/dev/github/extrasuite";
       flake = false;
     };
+    googleworkspace-cli.url = "github:googleworkspace/cli";
+    googleworkspace-cli.inputs.nixpkgs.follows = "nixpkgs";
 
     # impurity.url = "path:./modules/empty";
     # impurity.flake = false;

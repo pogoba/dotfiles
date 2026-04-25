@@ -245,6 +245,9 @@ in
     inputs.hosthog.packages.${stdenv.hostPlatform.system}.default
     inputs.llm-agents.packages.${stdenv.hostPlatform.system}.claude-code
     inputs.llm-agents.packages.${stdenv.hostPlatform.system}.workmux
+    google-cloud-sdk # needed for googleworkspace-cli
+    inputs.googleworkspace-cli.packages.${stdenv.hostPlatform.system}.default # needed to log in for extrasuite
+    flakepkgs.extrasuite # llm firendly google docs cli
     flakepkgs.claude-history
     flakepkgs.nono
     # claude-code
