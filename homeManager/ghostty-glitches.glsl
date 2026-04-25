@@ -18,7 +18,7 @@
 
 // side-effects that travel with the bar, tapered by the halo
 // chromatic aberration split (in uv units) at halo peak
-#define CHROMA .002
+#define CHROMA .001
 // white noise grain at halo peak
 #define GRAIN .00
 // scanline modulation at peak bar intensity (stays local to the bar core)
