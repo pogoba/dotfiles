@@ -6,7 +6,10 @@ if [[ $# -eq 0 ]]; then
 else
   TARGET_CMD=("$@")
 fi
-# TODO: check that TARGET_CMD is not empty and show help otherwise
+if [[ -z "${TARGET_CMD[*]}" ]]; then
+  echo "usage: $(basename "$0") <command> [args...]" >&2
+  exit 2
+fi
 
 # declare that we are in a special shell, so that the user sees shell prompts like:
 # nonowrap.sh:peter@aenderpad>
@@ -15,7 +18,7 @@ export name=$PROMPT_NAME
 
 # TODO: two nonowraps may share the same fs because this is racy
 DATE=$(date --iso-8601=seconds)
-PREFIX=/tmp/bwrap-$DATE
+PREFIX=${NONOWRAP_PREFIX:-/tmp/bwrap-$DATE}
 UPPER=$PREFIX/overlayfs-upper
 WORK=$PREFIX/overlayfs-work
 ENV=$PREFIX/env
@@ -55,4 +58,4 @@ sudo bwrap \
   --init-groups \
   --inh-caps=-all \
   -- \
-  bash -c 'exec "$@"' _ "${TARGET_CMD[@]}"
+  bash -c 'unset BASH_ENV; exec "$@"' _ "${TARGET_CMD[@]}"
