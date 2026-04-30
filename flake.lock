@@ -1069,6 +1069,7 @@
       "original": {
         "owner": "mic92",
         "repo": "dotfiles",
+        "rev": "cb42e21a9379701ea1769e26c28d103fcca55eb2",
         "type": "github"
       }
     },

@@ -49,7 +49,7 @@
 
     # mic92-dotfiles.url = "github:pogobanane/mic92-dotfiles";
     # mic92-dotfiles.url = "git+file:///home/peter/dev/mic92-dotfiles";
-    mic92-dotfiles.url = "github:mic92/dotfiles";
+    mic92-dotfiles.url = "github:mic92/dotfiles/cb42e21a9379701ea1769e26c28d103fcca55eb2"; # later verseon break compilation of my nvim
     # mic92-dotfiles.inputs.nixpkgs.follows = "nixpkgs";
 
     tex2nix.url = "github:Mic92/tex2nix"; # now owned by yliceee

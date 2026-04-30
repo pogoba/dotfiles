@@ -42,6 +42,12 @@
       extrasuite = pkgs.callPackage ./pkgs/extrasuite.nix {
         inherit (inputs) pyproject-nix uv2nix pyproject-build-systems extrasuite-src;
       };
+      hifiscan = pkgs.hifiscan.overrideAttrs (final: prev: {
+        buildInputs = prev.buildInputs ++ [ pkgs.wrapGAppsHook3 pkgs.wrapGAppsHook4 ];
+      });
+      easyeffects = pkgs.easyeffects.overrideAttrs (final: prev: {
+        buildInputs = prev.buildInputs ++ [ pkgs.wrapGAppsHook3 pkgs.wrapGAppsHook4 ];
+      });
     };
   };
   flake = let
