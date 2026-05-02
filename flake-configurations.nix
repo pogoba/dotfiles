@@ -81,6 +81,7 @@ in
         ./config-common.nix
         ./modules/gnome.nix
         ./modules/android-dev.nix
+        ./modules/jellyfin.nix
       ];
       inherit specialArgs;
     };
