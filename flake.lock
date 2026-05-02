@@ -332,8 +332,8 @@
     "discord-tar": {
       "flake": false,
       "locked": {
-        "lastModified": 1774282212,
-        "narHash": "sha256-dDYx8UzN7b/ioTVWKQstbpRUhLpBPLY6lc7ZNm0iM7s=",
+        "lastModified": 1777311422,
+        "narHash": "sha256-WNiVSvnM+RzgMhDuL1rlo/bekeu9N7SjhfBkwtVKMHA=",
         "type": "tarball",
         "url": "https://discord.com/api/download?format=tar.gz&platform=linux"
       },
@@ -1816,11 +1816,11 @@
         "nixpkgs": "nixpkgs_9"
       },
       "locked": {
-        "lastModified": 1763208925,
-        "narHash": "sha256-m5e01IaKMAn9p6j628Ke07Y9elhx9J6uAbBNa+KmSG8=",
+        "lastModified": 1770759665,
+        "narHash": "sha256-TRtM26yuWvzJCbuggpb2zosiMlTdZcE4Qnlx3ojvqUk=",
         "owner": "Mic92",
         "repo": "retiolum",
-        "rev": "464830e9b0547c47d725c86feb49bbafccb2d722",
+        "rev": "52ec034410d16b71b93f87ac4c1f14ff6b89adf3",
         "type": "github"
       },
       "original": {
