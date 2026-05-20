@@ -81,6 +81,7 @@
       claude-code = unstablepkgs.claude-code;
       codex = unstablepkgs.codex;
       gemini-cli = unstablepkgs.gemini-cli;
+      copilot-cli = unstablepkgs.copilot-cli;
       #nextcloud-client = nixpkgs.legacyPackages.x86_64-linux.libsForQt5.callPackage pkgs/nextcloud-client { };
       #chromium = unstablepkgs.legacyPackages.x86_64-linux.chromium;
       #slack = unstablepkgs.legacyPackages.x86_64-linux.slack;

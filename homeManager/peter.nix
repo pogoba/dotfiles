@@ -261,6 +261,7 @@ in
     # claude-code
     codex
     gemini-cli
+    copilot-cli
     flakepkgs.nix-top
   ];
 }
