@@ -256,6 +256,7 @@ in
       text = builtins.readFile ../nonowrap;
     })
     bubblewrap # nice to have
+    inputs.playpen.packages.${stdenv.hostPlatform.system}.playpen
 
     # claude-code
     codex

@@ -84,6 +84,9 @@
     nono-src.url = "github:pogoba/nono";
     nono-src.flake = false;
 
+    playpen.url = "github:pogoba/playpen";
+    playpen.inputs.nixpkgs.follows = "nixpkgs";
+
     claude-history-src.url = "github:raine/claude-history";
     claude-history-src.flake = false;
 
