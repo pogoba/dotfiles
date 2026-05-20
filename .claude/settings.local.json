@@ -2,7 +2,27 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(nix flake show:*)"
+      "Bash(nix flake show:*)",
+      "Bash(drawio:*)",
+      "Bash(grep:*)",
+      "WebSearch",
+      "WebFetch(domain:wiki.archlinux.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:blog.davidedmundson.co.uk)",
+      "Bash(nix-prefetch-url:*)",
+      "Bash(nix log:*)",
+      "Bash(ls:*)",
+      "WebFetch(domain:www.ndss-symposium.org)",
+      "Bash(ps:*)",
+      "WebFetch(domain:api.github.com)",
+      "Read(//home/peter/.claude/plugins/**)",
+      "Read(//home/peter/.claude/skills/**)",
+      "Read(//home/peter/.claude/**)",
+      "Bash(workmux --help)",
+      "Bash(workmux add:*)",
+      "Bash(workmux:*)",
+      "Bash(nix build *)",
+      "Read(//tmp/gdoc-pull/**)"
     ],
     "deny": [],
     "ask": []

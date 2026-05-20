@@ -12,7 +12,7 @@
 // bar frequency: higher = more bars visible on screen at once
 #define BAR_DENSITY 2.
 // break multiplier: 1. = always-on (original cadence), 10. → bar appears only 1 in every 10 natural periods
-#define BREAK_MULTIPLIER 100.
+#define BREAK_MULTIPLIER 800.
 // halo spread around the bar: lower = much wider taper. 0. covers ~the whole screen when the bar is centered
 #define HALO_THICKNESS 0.
 
