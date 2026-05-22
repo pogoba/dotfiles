@@ -25,7 +25,7 @@
   programs.ssh.knownHosts = {
     "login.dos.cit.tum.de" = {
       hostNames = [ "login.dos.cit.tum.de" ];
-      publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOdlUylM9WIFfIYZDK8rjVYQzX+RYwIlLgsEh4j0pNx6";
+      publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJiLBCN41dSG/45o5/h/56VF02nRVWe2ssTbE7VrxZOA";
     };
     "graham.dse.in.tum.de" = {
       hostNames = [ "graham.dse.in.tum.de" ];
