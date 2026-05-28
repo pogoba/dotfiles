@@ -158,7 +158,7 @@
   services.printing.drivers = [
     pkgs.gutenprint # often replaces hplip
 
-    # TUM-FMI Xerox "followme" PPD (CIT/ITO guide):
+    # TUM-FMI Xerox "followme" PPD (CIT/ITO guide): https://my.ito.cit.tum.de/printing/
     # https://wiki.ito.cit.tum.de/bin/view/CIT/ITO/Docs/Guides/XeroxDrucker/
     (pkgs.runCommand "xerox-c8030-ppd" { } ''
       install -Dm644 ${pkgs.fetchurl {
