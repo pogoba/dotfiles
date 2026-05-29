@@ -87,6 +87,7 @@
     thunderbird
     evince
     pdfarranger
+    xournalpp
     hexchat
     zoom-us
     element-desktop
@@ -103,7 +104,7 @@
     # cider # broken
     audacity
     webcord
-    discord
+    # discord
     slack
     signal-desktop
     zulip

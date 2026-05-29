@@ -81,7 +81,7 @@
       claude-code = unstablepkgs.claude-code;
       codex = unstablepkgs.codex;
       gemini-cli = unstablepkgs.gemini-cli;
-      copilot-cli = unstablepkgs.copilot-cli;
+      github-copilot-cli = unstablepkgs.github-copilot-cli;
       #nextcloud-client = nixpkgs.legacyPackages.x86_64-linux.libsForQt5.callPackage pkgs/nextcloud-client { };
       #chromium = unstablepkgs.legacyPackages.x86_64-linux.chromium;
       #slack = unstablepkgs.legacyPackages.x86_64-linux.slack;
@@ -90,10 +90,10 @@
       webcord = self.packages.x86_64-linux.webcord;
       #loc = flakepkgs.x86_64-linux.loc-git;
       #discord = unstablepkgs.legacyPackages.x86_64-linux.discord;
-      discord = prev.discord.overrideAttrs (_: {
-        src = inputs.discord-tar;
-        unpackCmd = "tar -xzf $curSrc";
-      });
+      # discord = prev.discord.overrideAttrs (_: {
+      #   src = inputs.discord-tar;
+      #   unpackCmd = "tar -xzf $curSrc";
+      # });
       alacritty = unstablepkgs.alacritty;
     })
     #(self: super: {
