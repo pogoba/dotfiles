@@ -248,7 +248,7 @@ in
     google-cloud-sdk # needed for googleworkspace-cli
     inputs.googleworkspace-cli.packages.${stdenv.hostPlatform.system}.default # needed to log in for extrasuite
     flakepkgs.extrasuite # llm firendly google docs cli
-    flakepkgs.claude-history
+    inputs.claude-history.packages.${stdenv.hostPlatform.system}.default
     flakepkgs.nono
     (pkgs.writeShellApplication {
       name = "nonowrap";

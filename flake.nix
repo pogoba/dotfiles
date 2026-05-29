@@ -87,8 +87,7 @@
     playpen.url = "github:pogoba/playpen";
     playpen.inputs.nixpkgs.follows = "nixpkgs";
 
-    claude-history-src.url = "github:raine/claude-history";
-    claude-history-src.flake = false;
+    claude-history.url = "github:raine/claude-history";
 
     claude-reflect-src.url = "github:bayramannakov/claude-reflect";
     claude-reflect-src.flake = false;
