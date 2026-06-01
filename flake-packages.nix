@@ -14,6 +14,7 @@
       sonixflasherc = pkgs.callPackage ./pkgs/sonixflasherc.nix { };
       qmk_firmware_k3 = pkgs.callPackage ./pkgs/qmk_firmware.nix { };
       revanced-cli = pkgs.callPackage ./pkgs/revanced-cli.nix { };
+      texra-cli = pkgs.callPackage ./pkgs/texra-cli.nix { inherit (inputs) texra-cli-bin; };
       #wluma = pkgs.callPackage ./pkgs/wluma.nix { };
       #webcord = if "${system}" == "x86_64-linux" then pkgs.callPackage ./pkgs/webcord-appimage.nix { } else null;
       #webcord = pkgs.callPackage ./pkgs/webcord-appimage.nix { };
